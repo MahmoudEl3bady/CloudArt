@@ -18,7 +18,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Image Editor",
-  description: "Edit your image with simple prompts using AI Model",
+description: "Edit your image with simple prompts using AI Model",
 };
 
 export default function RootLayout({
