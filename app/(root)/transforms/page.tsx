@@ -1,11 +1,18 @@
-import React from 'react'
+"use client";
+import { CldImage } from "next-cloudinary";
 
-const Transforms = () => {
+// By default, the CldImage component applies auto-format and auto-quality to all delivery URLs for optimized delivery.
+export default function Page() {
   return (
-    <div>
-      <h1>Transforms</h1>
-    </div>
-  )
+    <CldImage
+      alt="alt"
+      src="/public/assets/images/stacked-coins.png" // Use this sample image or upload your own via the Media Explorer
+      width="500" // Transform the image: auto-crop to square aspect_ratio
+      height="500"
+      crop={{
+        type: "auto",
+        source: true,
+      }}
+    />
+  );
 }
-
-export default Transforms

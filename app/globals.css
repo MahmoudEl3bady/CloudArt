@@ -285,9 +285,9 @@
   }
 
   /* MediaUploader Component */
-  .media-uploader_cldImage {
+  /* .media-uploader_cldImage {
     @apply h-fit min-h-72 w-full rounded-[10px] border border-dashed bg-purple-100/20 object-cover p-2;
-  }
+  } */
 
   .media-uploader_cta {
     @apply flex-center flex h-72 cursor-pointer flex-col gap-5 rounded-[16px] border border-dashed bg-purple-100/20 shadow-inner;
