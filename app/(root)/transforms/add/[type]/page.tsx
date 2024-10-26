@@ -7,7 +7,7 @@ import { getUserById } from "@/lib/actions/user";
 import { redirect } from "next/navigation";
 
 const AddTransformationsType =  async({ params: { type } }: SearchParamProps) => {
-  const {userId} = auth();
+  const {userId} = await auth();
   if(!userId){
     redirect("/sign-in")
   }
@@ -19,7 +19,7 @@ const AddTransformationsType =  async({ params: { type } }: SearchParamProps) =>
         title={transformation?.title}
         subtitle={transformation?.subTitle}
       />
-      <TransformsForm  action="Add" type={transformation.type as TransformationTypeKey} userId={user._id} />
+      <TransformsForm  action="Add" type={transformation.type as TransformationTypeKey} userId={user.clerkId} />
     </>
   );
 };

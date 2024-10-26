@@ -35,11 +35,13 @@ import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils";
 import MediaUploader from "./MediaUploader";
 import { getCldImageUrl } from "next-cloudinary";
 import { useRouter } from "next/navigation";
+import TransformedImage from "./TransformedImage";
+import { addImage, updateImage } from "@/lib/actions/image";
 
 export const formSchema = z.object({
   title: z.string(),
   aspectRatio: z.string().optional(),
-  color: z.string().optional(),
+  color: z.string().optional(),  
   prompt: z.string().optional(),
   publicId: z.string(),
 });
@@ -49,7 +51,6 @@ const TransformationForm = ({
   data = null,
   userId,
   type,
-  creditBalance,
   config = null,
 }: TransformationFormProps) => {
   const transformationType = transformationTypes[type];
@@ -104,46 +105,44 @@ const TransformationForm = ({
         prompt: values.prompt,
         color: values.color,
       };
-
+      startTransition(() => {
+      })   
       if (action === "Add") {
         try {
-          // const newImage = await addImage({
-          //   image: imageData,
-          //   userId,
-          //   path: "/",
-          // });
-
-          // if (newImage) {
-          //   form.reset();
-          //   setImage(data);
-          //   router.push(`/transformations/${newImage._id}`);
-          // }
-        } catch (error) {
-          console.log(error);
+          const newImage = await addImage({
+            image: imageData,
+          userId,
+          path: "/",
+        });
+        if (newImage) {
+          form.reset();
+          setImage(data);
+          router.push(`/transformations/${newImage._id}`);
         }
-      }
-
-      if (action === "Update") {
-        try {
-          // const updatedImage = await updateImage({
-          //   image: {
-          //     ...imageData,
-          //     _id: data._id,
-          //   },
-          //   userId,
-          //   path: `/transformations/${data._id}`,
-          // });
-
-          // if (updatedImage) {
-          //   router.push(`/transformations/${updatedImage._id}`);
-          // }
-        } catch (error) {
-          console.log(error);
-        }
+      } catch (error) {
+        console.log(error);
       }
     }
 
-    setIsSubmitting(false);
+    if (action === "Update") {
+      try {
+        const updatedImage = await updateImage({
+          image: {
+            ...imageData,
+            _id: data._id,
+          },
+          userId,
+          path: `/transformations/${data._id}`,
+        });
+        if (updatedImage) {
+          router.push(`/transformations/${updatedImage._id}`);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+  setIsSubmitting(false);
   }
 
   const onSelectFieldHandler = (
@@ -304,14 +303,14 @@ const TransformationForm = ({
             )}
           />
 
-          {/* <TransformedImage
+          <TransformedImage
             image={image}
             type={type}
             title={form.getValues().title}
             isTransforming={isTransforming}
             setIsTransforming={setIsTransforming}
             transformationConfig={transformationConfig}
-          /> */}
+          />
         </div>
 
         <div className="flex flex-col gap-4">
