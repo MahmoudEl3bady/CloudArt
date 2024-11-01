@@ -4,11 +4,11 @@ import { getAllImages } from "@/lib/actions/image";
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function Home({ searchParams }: SearchParamProps) {
-  const page = Number(searchParams?.page) || 1;
-  const searchQuery = (searchParams?.query as string) || "";
+export default async function Home({searchParams}:any) {
+  const {page : sPage,searchQuery :searchQ} = await searchParams;
+  const page = Number(sPage) || 1;
+  const searchQuery = (searchQ as string) || "";
   const images = await getAllImages({ limit: 9, page, searchQuery });
-  console.log("Home collection Images : ",images);
   return (
     <main className="">
       <section className="home">

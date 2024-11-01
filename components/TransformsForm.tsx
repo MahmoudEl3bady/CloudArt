@@ -15,12 +15,6 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -114,10 +108,11 @@ const TransformationForm = ({
           userId,
           path: "/",
         });
+        console.log(newImage)
         if (newImage) {
           form.reset();
           setImage(data);
-          router.push(`/transformations/${newImage._id}`);
+          router.push(`/transforms/${newImage._id}`);
         }
       } catch (error) {
         console.log(error);
@@ -274,7 +269,7 @@ const TransformationForm = ({
                     className="input-field"
                     onChange={(e) =>
                       onInputChangeHandler(
-                        "color",
+                        "color", 
                         e.target.value,
                         "recolor",
                         field.onChange
