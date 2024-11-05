@@ -108,7 +108,6 @@ const TransformationForm = ({
           userId,
           path: "/",
         });
-        console.log(newImage)
         if (newImage) {
           form.reset();
           setImage(data);
@@ -127,10 +126,10 @@ const TransformationForm = ({
             _id: data._id,
           },
           userId,
-          path: `/transformations/${data._id}`,
+          path: `/transforms/${data._id}`,
         });
         if (updatedImage) {
-          router.push(`/transformations/${updatedImage._id}`);
+          router.push(`/transforms/${updatedImage._id}`);
         }
       } catch (error) {
         console.log(error);

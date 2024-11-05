@@ -99,11 +99,7 @@ export async function getImageById(imageId: string) {
   }
 }
 
-export async function getAllImages({
-  limit = 9,
-  page = 1,
-  searchQuery = "",
-}: GetAllImagesParams): Promise<ImageResponse> {
+export async function getAllImages() {
   try {
     await connectToDatabase();
 
@@ -115,42 +111,11 @@ export async function getAllImages({
       secure: true,
     });
 
-    // Build cloudinary search expression
-    let expression = "folder=image-transformer";
-    if (searchQuery) {
-      expression += ` AND ${searchQuery}`;
-    }
+    const images = await Image.find();
 
-    // Get resources from cloudinary
-    const { resources } = await cloudinary.search
-      .expression(expression)
-      .execute();
+    return JSON.parse(JSON.stringify(images));
 
-    const resourceIds = resources.map((resource: any) => resource.public_id);
-
-    // Build query
-    const query = {
-      publicId: {
-        $in: resourceIds,
-      },
-    };
-
-    // Calculate skip amount for pagination
-    const skipAmount = (Number(page) - 1) * limit;
-
-    // Create the base query
-    const baseQuery = Image.find(query).skip(skipAmount).limit(limit);
-    // Execute the populated query
-    const images = await populateUser(baseQuery);
-    const testImage = await Image.find();
-    // Get total count for pagination
-    const totalImages = await Image.countDocuments(query);
-    return {
-      data: images || [],
-      totalPages: Math.ceil(totalImages / limit),
-    };
-  } catch (error) {
-    handleError(error);
-    throw error;
+  }catch(e){
+    console.error(e);
   }
 }

@@ -87,9 +87,9 @@ export const Collection = ({
 const Card = ({ image }: { image:any }) => {
   return (
     <li>
-      <Link href={`/transformations/${image._id}`} className="collection-card">
+      <Link href={`/transforms/${image._id}`} className="collection-card">
         <CldImage
-          src={image.publicId}
+          src={image.secureURL}
           alt={image.title}
           width={image.width}
           height={image.height}

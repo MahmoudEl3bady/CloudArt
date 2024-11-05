@@ -9,15 +9,14 @@ import { getImageById } from "@/lib/actions/image";
 import { getImageSize } from "@/lib/utils";
 // import { DeleteConfirmation } from "@/components/DeleteConfirmation";
 
-const ImageDetails = async ({ params: { id } }: SearchParamProps) => {
+const ImageDetails = async ({ params }: SearchParamProps) => {
   const { userId } = await auth();
-
+  const {id} = await params;
   const image: any = await getImageById(id);
 
   return (
     <>
       <Header title={image.title} />
-
       <section className="mt-5 flex flex-wrap gap-4">
         <div className="p-14-medium md:p-16-medium flex gap-2">
           <p className="text-dark-600">Transformation:</p>

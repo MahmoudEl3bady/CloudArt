@@ -8,7 +8,7 @@ export default async function Home({searchParams}:any) {
   const {page : sPage,searchQuery :searchQ} = await searchParams;
   const page = Number(sPage) || 1;
   const searchQuery = (searchQ as string) || "";
-  const images = await getAllImages({ limit: 9, page, searchQuery });
+  const images = await getAllImages();
   return (
     <main className="">
       <section className="home">
@@ -29,8 +29,8 @@ export default async function Home({searchParams}:any) {
       <section className="sm:mt-12">
         <Collection
           hasSearch={true}
-          images={images?.data}
-          totalPages={images?.totalPages}
+          images={images}
+          // totalPages={images}
           page={page}
         />
       </section>
