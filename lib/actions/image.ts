@@ -7,6 +7,7 @@ import { getUserById } from "./user";
 import { Image } from "@/db/models/image.model";
 import { redirect } from "next/navigation";
 import { v2 as cloudinary } from "cloudinary";
+import mongoose from "mongoose";
 
 interface GetAllImagesParams {
   limit?: number;
@@ -61,7 +62,7 @@ export async function updateImage({ path, image, userId }: UpdateImageParams) {
       throw new Error("Image not found");
     }
     revalidatePath(path);
-    return updatedImage;
+    return JSON.parse(JSON.stringify(updateImage));
   } catch (error) {
     handleError(error);
     throw error;
@@ -77,7 +78,7 @@ export async function addImage({ image, userId, path }: AddImageParams) {
     }
     const createdImage = await Image.create({ ...image, author: author._id });
     revalidatePath(path);
-    return createdImage;
+    return JSON.parse(JSON.stringify(createdImage));
   } catch (error) {
     handleError(error);
     throw error;
@@ -92,7 +93,7 @@ export async function getImageById(imageId: string) {
     if (!image) {
       throw new Error("Image not found");
     }
-    return image;
+    return JSON.parse(JSON.stringify(image));
   } catch (error) {
     handleError(error);
     throw error;
@@ -111,7 +112,12 @@ export async function getAllImages() {
       secure: true,
     });
 
-    const images = await Image.find();
+    let expression = 'folder=image-transformer';
+    const {resources} = await cloudinary.search.expression(expression).execute();
+    console.log(resources);
+    const resourcesIds = resources.map((res:any)=>res.public_id); 
+
+    const images = await populateUser(Image.find());
 
     return JSON.parse(JSON.stringify(images));
 
@@ -119,3 +125,18 @@ export async function getAllImages() {
     console.error(e);
   }
 }
+
+
+export const getUserRecentImages = async (userId: string) => {
+  await connectToDatabase();
+
+  try {
+    const userEdits = await Image.find({
+      author: new mongoose.Types.ObjectId(userId),
+    });
+    return JSON.parse(JSON.stringify(userEdits));
+  } catch (error) {
+    console.error("Failed to retrieve user's recent images:", error);
+    return []; 
+  }
+};

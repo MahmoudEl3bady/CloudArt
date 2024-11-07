@@ -1,3 +1,4 @@
+'use client';
 import { dataUrl, debounce, getImageSize } from "@/lib/utils";
 import { CldImage } from "next-cloudinary";
 import { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
@@ -31,7 +32,7 @@ const TransformedImage = ({
         )}
       </div>
 
-      {image?.publicId && transformationConfig ? (
+      {image?.secureURL && transformationConfig ? (
         <div className="relative">
           <CldImage
             width={getImageSize(type, image, "width")}
