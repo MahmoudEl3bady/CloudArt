@@ -1,25 +1,33 @@
 'use client';
-import { dataUrl, debounce, getImageSize } from "@/lib/utils";
-import { CldImage } from "next-cloudinary";
+import { dataUrl, debounce, download, getImageSize } from "@/lib/utils";
+import { CldImage, getCldImageUrl } from "next-cloudinary";
 import { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
 import Image from "next/image";
 
 const TransformedImage = ({
   image,
   type,
+  title,
   transformationConfig,
   isTransforming,
   setIsTransforming,
   hasDownload,
 }: TransformedImageProps) => {
   //TODO: Implement download handler
-  // const downLoadHandler = () => {};
+  const downLoadHandler = () => {
+    download(getCldImageUrl({
+      width:image?.width,
+      height:image?.height,
+      src:image?.secureURL,
+      ...transformationConfig
+    }),title);
+  };
   return (
     <div className="flex flex-col gap-4">
       <div className="flex-between">
         <h3 className="h3-bold text-dark-400">Transformed</h3>
         {hasDownload && (
-          <button className="download-btn">
+          <button className="download-btn" onClick={downLoadHandler}>
             Download
             <Image
               src="/assets/icons/download.svg"

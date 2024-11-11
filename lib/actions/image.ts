@@ -112,31 +112,48 @@ export async function getAllImages() {
       secure: true,
     });
 
-    let expression = 'folder=image-transformer';
-    const {resources} = await cloudinary.search.expression(expression).execute();
-    console.log(resources);
-    const resourcesIds = resources.map((res:any)=>res.public_id); 
+    let expression = "folder=image-transformer";
+    const { resources } = await cloudinary.search
+      .expression(expression)
+      .execute();
+    const resourcesIds = resources.map((res: any) => res.public_id);
 
     const images = await populateUser(Image.find());
 
     return JSON.parse(JSON.stringify(images));
-
-  }catch(e){
+  } catch (e) {
     console.error(e);
   }
 }
 
-
-export const getUserRecentImages = async (userId: string) => {
-  await connectToDatabase();
-
+export const getUserImages = async ({
+  userId,
+  limit = 9,
+  page = 1,
+}: {
+  userId: string;
+  limit?: number;
+  page: number;
+}) => {
   try {
-    const userEdits = await Image.find({
+    await connectToDatabase();
+    const skipAmount = (Number(page) - 1) * limit;
+
+    const userImages = await Image.find({
       author: new mongoose.Types.ObjectId(userId),
-    });
-    return JSON.parse(JSON.stringify(userEdits));
+    })
+      .sort({ updatedAt: -1 })
+      .skip(skipAmount)
+      .limit(limit);
+
+    const totalImages = await Image.find({ author: userId }).countDocuments();
+
+    return {
+      data: JSON.parse(JSON.stringify(userImages)),
+      totalPages: Math.ceil(totalImages / limit),
+    };
   } catch (error) {
     console.error("Failed to retrieve user's recent images:", error);
-    return []; 
+    return [];
   }
 };

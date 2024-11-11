@@ -1,19 +1,20 @@
 import { Collection } from "@/components/Collection";
 import { navLinks } from "@/constants";
-import { getAllImages, getUserRecentImages } from "@/lib/actions/image";
+import { getUserImages} from "@/lib/actions/image";
 import { getUserById } from "@/lib/actions/user";
 import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default async function Home({searchParams}:any) {
-  const {page : sPage,searchQuery :searchQ} = await searchParams;
+export default async function Home({ searchParams }: any) {
+  const { page: sPage, searchQuery: searchQ } = await searchParams;
   const page = Number(sPage) || 1;
-  const searchQuery = (searchQ as string) || "";
   const clerkUser = await currentUser();
+  if (!clerkUser) redirect("/sign-in");
   const user = await getUserById(clerkUser?.id as string);
-  // const images = await getUserRecentImages(user?._id as string);
-  const images = await getAllImages();
+  const images = await getUserImages({ userId: user._id as string,page,limit:6});
+
   return (
     <main className="">
       <section className="home">
@@ -35,7 +36,7 @@ export default async function Home({searchParams}:any) {
         <Collection
           hasSearch={true}
           images={images}
-          // totalPages={images}
+          totalPages={images.totalPages as number}
           page={page}
         />
       </section>

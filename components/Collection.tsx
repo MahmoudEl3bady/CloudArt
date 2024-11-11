@@ -7,7 +7,12 @@ import { CldImage } from "next-cloudinary";
 import { transformationTypes } from "@/constants";
 import { formUrlQuery } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { Pagination, PaginationContent, PaginationNext, PaginationPrevious } from "./ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationNext,
+  PaginationPrevious,
+} from "./ui/pagination";
 import { Search } from "./Search";
 export const Collection = ({
   hasSearch = false,
@@ -15,7 +20,7 @@ export const Collection = ({
   totalPages = 1,
   page,
 }: {
-  images:any;
+  images: any;
   totalPages?: number;
   page: number;
   hasSearch?: boolean;
@@ -43,9 +48,9 @@ export const Collection = ({
         {hasSearch && <Search />}
       </div>
 
-      {images && images.length > 0 ? (
+      {images.data && images.data.length > 0 ? (
         <ul className="collection-list">
-          {images.map((image:any) => (
+          {images.data.map((image: any) => (
             <Card image={image} key={image._id} />
           ))}
         </ul>
@@ -84,7 +89,7 @@ export const Collection = ({
   );
 };
 
-const Card = ({ image }: { image:any }) => {
+const Card = ({ image }: { image: any }) => {
   return (
     <li>
       <Link href={`/transforms/${image._id}`} className="collection-card">
