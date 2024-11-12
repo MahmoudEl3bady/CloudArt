@@ -18,7 +18,7 @@ export default async function Home({ searchParams }: any) {
   return (
     <main className="">
       <section className="home">
-        <h1 className="home-heading">
+        <h1 className="home-heading text-background">
           Lorem, ipsum dolor sit amet consectetur adipisicing elit!
         </h1>
         <ul className="flex-center w-full gap-20">

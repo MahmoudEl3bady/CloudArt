@@ -44,7 +44,7 @@ export const Collection = ({
   return (
     <>
       <div className="collection-heading">
-        <h2 className="h2-bold text-dark-600">Recent Edits</h2>
+        <h2 className="h2-bold text-primary">Recent Edits</h2>
         {hasSearch && <Search />}
       </div>
 
@@ -71,7 +71,7 @@ export const Collection = ({
               <PaginationPrevious className="hover:bg-transparent hover:text-white" />
             </Button>
 
-            <p className="flex-center p-16-medium w-fit flex-1">
+            <p className="flex-center p-16-semibold w-fit flex-1 text-accent">
               {page} / {totalPages}
             </p>
 
@@ -104,7 +104,7 @@ const Card = ({ image }: { image: any }) => {
           sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
         />
         <div className="flex-between">
-          <p className="p-20-semibold mr-3 line-clamp-1 text-dark-600">
+          <p className="p-20-semibold mr-3 line-clamp-1 text-blue-400">
             {image.title}
           </p>
           <Image

@@ -24,18 +24,19 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         purple: {
-          100: "#F4F7FE",
-          200: "#BCB6FF",
-          400: "#868CFF",
-          500: "#7857FF",
-          600: "#4318FF",
+          100: "#E3F2FD", // light blue for the background
+          200: "#64B5F6", // light blue for accents
+          400: "#0288D1", // blue for info
+          500: "#0D47A1", // deep blue for primary
+          600: "#030637", // bright blue for secondary
         },
         dark: {
-          400: "#7986AC",
-          500: "#606C80",
-          600: "#2B3674",
-          700: "#384262",
+          400: "#78909C", // muted gray for dark mode
+          500: "#616161", // darker gray for dark mode
+          600: "#4B4B4B", // deep gray for dark mode
+          700: "#121212", // very dark gray for dark mode
         },
+
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

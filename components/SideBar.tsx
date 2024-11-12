@@ -1,15 +1,23 @@
 "use client";
 
 import { navLinks } from "@/constants";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedOut, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
+import { useEffect, useState } from "react";
 
 const SideBar = () => {
   const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
 
+  // Ensures that client-only code runs only on the client after initial render
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null; 
   return (
     <aside className="sidebar">
       <div className="flex size-full items-start flex-col gap-4">

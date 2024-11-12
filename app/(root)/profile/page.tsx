@@ -10,7 +10,7 @@ const Profile = async () => {
   const images = await getUserImages({ userId: user._id as string, page });
   return (
     <div>
-      <h1 className="">Profile Page</h1>
+      <h1 className="text-[#ededed] text-3xl text-bold">Profile Page</h1>
       <section>
         <Collection
           hasSearch={true}
