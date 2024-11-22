@@ -16,7 +16,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Image Editor",
+  title: "Cloud Art",
   description: "Edit your image with simple prompts using AI Model",
 };
 

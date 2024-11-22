@@ -1,0 +1,13 @@
+<svg width="500px" height="200px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <!-- Cloud Icon -->
+  <path d="M10 30 C 10 15, 25 5, 40 20 C 55 5, 70 15, 70 30 
+           C 90 30, 90 50, 70 50 H 20 C 5 50, 5 30, 10 30 Z" 
+        fill="#4A90E2" 
+        transform="scale(1.2) translate(10, 20)" />
+  
+  <!-- Text "cloudArt" with Bebas Neue Font -->
+  <text x="110" y="65" font-family="'Bebas Neue', sans-serif" font-size="55px" fill="#E3F2FD">
+    CLOUD ART
+  </text>
+</svg>

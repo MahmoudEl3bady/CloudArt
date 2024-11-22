@@ -179,7 +179,7 @@
   } */
 
   .search-field {
-    @apply border-0 bg-transparent text-dark-600 w-full placeholder:text-dark-400 h-[50px] p-16-medium focus-visible:ring-offset-0 p-3 focus-visible:ring-transparent !important;
+    @apply border-0 bg-transparent text-dark-600 w-full placeholder:text-dark-400 p-16-medium focus-visible:ring-offset-0 p-3 focus-visible:ring-transparent !important;
   }
 
   .submit-button {
@@ -216,7 +216,7 @@
 
   /* Home Page */
   .home {
-    @apply sm:flex-center hidden h-72 flex-col gap-4 rounded-[20px] border bg-banner bg-black bg-cover bg-no-repeat p-10 shadow-inner;
+    @apply sm:flex-center hidden h-72 flex-col gap-4 rounded-[20px] border bg-blue-500  bg-cover bg-no-repeat p-10 shadow-inner;
   }
 
   .home-heading {
@@ -312,7 +312,7 @@
   }
 
   .sidebar-logo {
-    @apply flex items-center gap-2 md:py-2;
+    @apply flex items-center gap-2 ;
   }
 
   .sidebar-nav {

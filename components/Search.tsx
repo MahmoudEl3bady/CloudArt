@@ -37,7 +37,7 @@ export const Search = () => {
   }, [router, searchParams, query]);
 
   return (
-    <div className="search">
+    <div className="flex items-center">
       <Image
         src="/assets/icons/search.svg"
         alt="search"
@@ -46,7 +46,7 @@ export const Search = () => {
       />
 
       <Input
-        className="search-field"
+        className="search-field   "
         placeholder="Search"
         onChange={(e) => setQuery(e.target.value)}
       />
