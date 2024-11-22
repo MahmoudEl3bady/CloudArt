@@ -202,8 +202,7 @@ const TransformationForm = ({
           className="w-full"
           render={({ field }) => <Input {...field} className="input-field" />}
         />
-
-        {type === "fill" && (
+        {(type === "fill" || type==="crop") && (
           <CustomField
             control={form.control}
             name="aspectRatio"

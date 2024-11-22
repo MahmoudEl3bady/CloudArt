@@ -1,3 +1,6 @@
+import { subscribe } from "diagnostics_channel";
+import { config } from "process";
+
 export const navLinks = [
   {
     label: "Home",
@@ -28,6 +31,11 @@ export const navLinks = [
     label: "Background Remove",
     route: "/transforms/add/removeBackground",
     icon: "/assets/icons/camera.svg",
+  },
+  {
+    label: "Scaling and Crop",
+    route: "/transforms/add/crop",
+    icon: "/assets/icons/scan.svg",
   },
   {
     label: "Profile",
@@ -75,6 +83,15 @@ export const transformationTypes = {
       recolor: { prompt: "", to: "", multiple: true },
     },
     icon: "filter.svg",
+  },
+  crop: {
+    type: "crop",
+    title: "Crop & Scaling",
+    subTitle: "Crop and Scale images for social media cards",
+    config: {
+      crop: "imagga_crop", 
+      aspectRatio: "16:9", 
+    },
   },
 };
 

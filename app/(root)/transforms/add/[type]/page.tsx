@@ -14,6 +14,7 @@ const AddTransformationsType =  async({ params }: SearchParamProps) => {
   }
   const user = await getUserById(userId);
   const transformation = transformationTypes[type];
+  console.log(transformation);
   return (
     <>
       <Header

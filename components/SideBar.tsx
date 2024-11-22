@@ -17,7 +17,7 @@ const SideBar = () => {
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) return null; 
+  if (!isMounted) return null;
   return (
     <aside className="sidebar">
       <div className="flex size-full items-start flex-col gap-4">
@@ -39,12 +39,12 @@ const SideBar = () => {
               return (
                 <li
                   key={link.route}
-                  className={`sidebar-nav_element group ${
+                  className={`sidebar-nav_element group  ${
                     isActive ? "bg-purple-gradient text-white" : "text-gray-700"
                   }`}
                 >
                   <Link
-                    className="flex  gap-4 p-3 font-semibold  text-[16px] leading-[140%]"
+                    className="flex justify-end gap-4 p-3 font-semibold  text-[16px] leading-[140%]"
                     href={link.route}
                   >
                     <Image
@@ -107,4 +107,3 @@ const SideBar = () => {
 };
 
 export default SideBar;
-

@@ -195,7 +195,7 @@
   }
 
   .select-item {
-    @apply py-3 cursor-pointer hover:bg-purple-100;
+    @apply py-3 cursor-pointer ;
   }
 
   .IconButton {
@@ -328,7 +328,7 @@
   }
 
   .sidebar-link {
-    /* @apply p-16-semibold flex size-full gap-4 p-4; */
+    @apply p-16-semibold flex size-full gap-4 p-4;
   }
 
   /* TransformationForm Component */

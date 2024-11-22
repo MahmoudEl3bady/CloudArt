@@ -19,7 +19,7 @@ export default async function Home({ searchParams }: any) {
     <main className="">
       <section className="home">
         <h1 className="home-heading text-background">
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit!
+          Edit your photos with the Power of AI
         </h1>
         <ul className="flex-center w-full gap-20">
           {navLinks.slice(1, 5).map((link) => (
