@@ -14,9 +14,10 @@ import {
   PaginationPrevious,
 } from "./ui/pagination";
 import { Search } from "./Search";
+import { useMemo } from "react";
 export const Collection = ({
   hasSearch = false,
-  images,
+  images: initialImages,
   totalPages = 1,
   page,
 }: {
@@ -27,6 +28,23 @@ export const Collection = ({
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const query = searchParams.get("query") || "";
+  // Filter images based on search query
+  const filteredImages = useMemo(() => {
+    if (!initialImages?.data) return { data: [] };
+
+    if (!query) return initialImages;
+
+    const filtered = initialImages.data.filter((image: any) =>
+      image.title.toLowerCase().includes(query.toLowerCase())
+    );
+
+    return {
+      ...initialImages,
+      data: filtered,
+      totalPages: Math.ceil(filtered.length / 10), // Adjust based on your page size
+    };
+  }, [initialImages, query]);
 
   // PAGINATION HANDLER
   const onPageChange = (action: string) => {
@@ -45,12 +63,12 @@ export const Collection = ({
     <>
       <div className="collection-heading">
         <h2 className="h2-bold text-primary">Recent Edits</h2>
-        {hasSearch && <Search />}
+        {hasSearch && <Search defaultValue=""/>}
       </div>
 
-      {images.data && images.data.length > 0 ? (
+      {filteredImages.data && filteredImages.data.length > 0 ? (
         <ul className="collection-list">
-          {images.data.map((image: any) => (
+          {filteredImages.data.map((image: any) => (
             <Card image={image} key={image._id} />
           ))}
         </ul>

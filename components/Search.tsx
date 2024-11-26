@@ -8,10 +8,10 @@ import { Input } from "@/components/ui/input";
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 
 
-export const Search = () => {
+export const Search = ({defaultValue=""}) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(defaultValue);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
