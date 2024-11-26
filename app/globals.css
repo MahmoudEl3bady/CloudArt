@@ -195,7 +195,7 @@
   }
 
   .select-item {
-    @apply py-3 cursor-pointer ;
+    @apply py-3 cursor-pointer  bg-purple-100;
   }
 
   .IconButton {
