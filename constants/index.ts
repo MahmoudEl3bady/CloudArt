@@ -33,11 +33,6 @@ export const navLinks = [
     icon: "/assets/icons/camera.svg",
   },
   {
-    label: "Scaling and Crop",
-    route: "/transforms/add/crop",
-    icon: "/assets/icons/scan.svg",
-  },
-  {
     label: "Profile",
     route: "/profile",
     icon: "/assets/icons/profile.svg",
@@ -83,15 +78,6 @@ export const transformationTypes = {
       recolor: { prompt: "", to: "", multiple: true },
     },
     icon: "filter.svg",
-  },
-  crop: {
-    type: "crop",
-    title: "Crop & Scaling",
-    subTitle: "Crop and Scale images for social media cards",
-    config: {
-      crop: "imagga_crop", 
-      aspectRatio: "16:9", 
-    },
   },
 };
 

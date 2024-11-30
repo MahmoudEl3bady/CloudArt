@@ -7,7 +7,7 @@ const Profile = async () => {
   const clerkUser = await currentUser();
   const page = 1;
   const user = await getUserById(clerkUser?.id as string);
-  const images = await getUserImages({ userId: user._id as string, page });
+  const images = await getUserImages({ userId: user._id as string, page }) as ImagesResponse;
   return (
     <div>
       <h1 className="text-[#ededed] text-3xl text-bold">Profile Page</h1>
@@ -15,7 +15,7 @@ const Profile = async () => {
         <Collection
           hasSearch={true}
           images={images}
-          totalPages={images.totalPages as number}
+          totalPages={images.totalPages}
           page={page}
         />
       </section>

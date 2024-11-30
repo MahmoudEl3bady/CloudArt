@@ -15,38 +15,55 @@ import {
 } from "./ui/pagination";
 import { Search } from "./Search";
 import { useMemo } from "react";
+
+type TransformationTypeKey = keyof typeof transformationTypes;
+
+interface ImageType {
+  _id: string;
+  title: string;
+  transformationType: TransformationTypeKey;
+  secureURL: string;
+  width: number;
+  height: number;
+  config: Record<string, any>;
+}
+
+interface CollectionProps {
+  hasSearch?: boolean;
+  images: {
+    data: ImageType[];
+    totalPages?: number;
+  };
+  totalPages?: number;
+  page: number;
+}
+
 export const Collection = ({
   hasSearch = false,
   images: initialImages,
   totalPages = 1,
   page,
-}: {
-  images: any;
-  totalPages?: number;
-  page: number;
-  hasSearch?: boolean;
-}) => {
+}: CollectionProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
-  // Filter images based on search query
+
   const filteredImages = useMemo(() => {
     if (!initialImages?.data) return { data: [] };
 
     if (!query) return initialImages;
 
-    const filtered = initialImages.data.filter((image: any) =>
+    const filtered = initialImages.data.filter((image) =>
       image.title.toLowerCase().includes(query.toLowerCase())
     );
 
     return {
       ...initialImages,
       data: filtered,
-      totalPages: Math.ceil(filtered.length / 10), // Adjust based on your page size
+      totalPages: Math.ceil(filtered.length / 10),
     };
   }, [initialImages, query]);
 
-  // PAGINATION HANDLER
   const onPageChange = (action: string) => {
     const pageValue = action === "next" ? Number(page) + 1 : Number(page) - 1;
 
@@ -63,12 +80,12 @@ export const Collection = ({
     <>
       <div className="collection-heading">
         <h2 className="h2-bold text-primary">Recent Edits</h2>
-        {hasSearch && <Search defaultValue=""/>}
+        {hasSearch && <Search defaultValue="" />}
       </div>
 
       {filteredImages.data && filteredImages.data.length > 0 ? (
         <ul className="collection-list">
-          {filteredImages.data.map((image: any) => (
+          {filteredImages.data.map((image) => (
             <Card image={image} key={image._id} />
           ))}
         </ul>
@@ -107,7 +124,26 @@ export const Collection = ({
   );
 };
 
-const Card = ({ image }: { image: any }) => {
+interface CardProps {
+  image: ImageType;
+}
+interface TransformationType {
+  type: string;
+  title: string;
+  subTitle: string;
+  config: Record<string, any>;
+  icon: string;
+}
+
+const Card = ({ image }: CardProps) => {
+  const transformationType = image.transformationType;
+  const transformation = transformationTypes[transformationType] as TransformationType ;
+
+  if (!transformation || !transformation.icon) {
+    console.error(`Invalid transformation type: ${transformationType}`);
+    return null;
+  }
+
   return (
     <li>
       <Link href={`/transforms/${image._id}`} className="collection-card">
@@ -126,11 +162,7 @@ const Card = ({ image }: { image: any }) => {
             {image.title}
           </p>
           <Image
-            src={`/assets/icons/${
-              transformationTypes[
-                image.transformationType as TransformationTypeKey
-              ].icon
-            }`}
+            src={`/assets/icons/${transformation.icon}`}
             alt={image.title}
             width={24}
             height={24}

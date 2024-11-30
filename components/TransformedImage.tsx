@@ -13,14 +13,13 @@ const TransformedImage = ({
   setIsTransforming,
   hasDownload,
 }: TransformedImageProps) => {
-  //TODO: Implement download handler
   const downLoadHandler = () => {
     download(getCldImageUrl({
       width:image?.width,
       height:image?.height,
       src:image?.secureURL,
       ...transformationConfig
-    }),title);
+    } as any),title);
   };
   return (
     <div className="flex flex-col gap-4">

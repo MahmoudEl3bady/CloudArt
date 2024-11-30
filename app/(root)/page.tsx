@@ -17,7 +17,7 @@ export default async function Home({ searchParams }: any) {
     userId: user._id as string,
     page,
     limit: 6,
-  });
+  }) as ImagesResponse;
 
   return (
     <main className="">
@@ -44,7 +44,7 @@ export default async function Home({ searchParams }: any) {
         <Collection
           hasSearch={true}
           images={images}
-          totalPages={images.totalPages as any}
+          totalPages={images.totalPages}
           page={page}
         />
       </section>

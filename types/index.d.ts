@@ -67,7 +67,6 @@ declare type Transformations = {
     multiple?: boolean;
   };
   removeBackground?: boolean;
-  crop?: boolean;
 };
 
 // ====== TRANSACTION PARAMS
@@ -93,7 +92,6 @@ declare type TransformationTypeKey =
   | "remove"
   | "recolor"
   | "removeBackground"
-  | "crop";
 
 // ====== URL QUERY PARAMS
 declare type FormUrlQueryParams = {
@@ -113,8 +111,17 @@ declare type RemoveUrlQueryParams = {
   keysToRemove: string[];
 };
 
-declare type SearchParamProps = {
+declare type  ImagesResponse = {
+  data: any[];
+  totalPages: number;
+}
+
+declare type Params = {
   params: { id: string; type: TransformationTypeKey };
+}; 
+
+declare type SearchParamProps = {
+  params: { id: string; type?: TransformationTypeKey };
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
