@@ -1,5 +1,10 @@
 "use client";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { navLinks } from "@/constants";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
@@ -9,64 +14,71 @@ import { Button } from "./ui/button";
 
 const MobileNav = () => {
   const pathname = usePathname();
+
   return (
     <header className="header">
-      <Link href={"/"} className="flex items-center gap-2 md:py-2">
+      <Link href="/" className="pt-10">
         <Image
-          src="/assets/images/logo-text.svg"
+          src="/assets/icons/cloudArt-logo.svg"
           alt="logo"
           width={180}
           height={28}
+          priority
         />
       </Link>
       <nav className="flex gap-2">
         <SignedIn>
-          <UserButton />
+          <UserButton  />
           <Sheet>
-            <SheetTrigger>
+            <SheetTrigger aria-label="Open menu">
               <Image
-                src="assets/icons/menu.svg"
+                src="/assets/icons/menu.svg"
                 width={34}
                 height={34}
                 className="cursor-pointer"
                 alt="menu"
               />
             </SheetTrigger>
-            <SheetContent className="sheet-content sm:w-64">
-              <Image
-                src="assets/images/logo-text.svg"
-                width={180}
-                height={28}
-                alt="logo"
-              />
-              <ul className="header-nav_elements ">
-                {navLinks.map((link) => {
-                  const isActive = link.route === pathname;
+            <SheetContent className="sheet-content sm:w-64" side="right">
+              <SheetTitle className="text-left">
+                <Image
+                  src="/assets/icons/cloudArt-logo.svg"
+                  alt="logo"
+                  width={180}
+                  height={28}
+                  priority
+                />
+              </SheetTitle>
+              <nav>
+                <ul className="mt-6 space-y-2">
+                  {navLinks.map((link) => {
+                    const isActive = link.route === pathname;
 
-                  return (
-                    <li
-                      key={link.route}
-                      className={`${
-                        isActive && "text-purple-600 "
-                      } p-18 flex whitespace-nowrap text-dark-700`}
-                    >
-                      <Link
-                        className="flex  gap-4 p-3 font-semibold  text-[16px] leading-[140%] hover:text-purple-600"
-                        href={link.route}
-                      >
-                        <Image
-                          src={link.icon}
-                          alt="logo"
-                          width={24}
-                          height={24}
-                          className={`${isActive && "brightness-200"}`}
-                        />
-                        {link.label}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+                    return (
+                      <li key={link.route}>
+                        <Link
+                          className={`flex items-center gap-4 p-3 font-semibold text-[16px] leading-[140%] transition-colors
+                            ${
+                              isActive
+                                ? "text-blue-400"
+                                : "text-slate-400 hover:text-purple-600"
+                            }`}
+                          href={link.route}
+                        >
+                          <Image
+                            src={link.icon}
+                            alt=""
+                            width={24}
+                            height={24}
+                            className={isActive ? "brightness-200" : ""}
+                          />
+                          {link.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </nav>
             </SheetContent>
           </Sheet>
         </SignedIn>
