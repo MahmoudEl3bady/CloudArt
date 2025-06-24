@@ -1,6 +1,9 @@
 # CloudArt 
 
 CloudArt is a powerful Next.js application that leverages AI to transform and edit images with ease using the Cloudinary API.
+<br>
+**DEMO**
+https://www.loom.com/share/d3236a803a824f9cab1671e207fec793
 
 ## Features
 
