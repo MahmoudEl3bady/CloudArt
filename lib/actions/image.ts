@@ -1,7 +1,6 @@
 "use server";
 import { connectToDatabase } from "@/db/mongoose";
 import { revalidatePath } from "next/cache";
-import { handleError } from "../utils";
 import { User } from "@/db/models/user.model";
 import { getUserById } from "./user";
 import { Image } from "@/db/models/image.model";
@@ -43,7 +42,7 @@ export async function deleteImage(imageId: string) {
     }
     return deletedImage;
   } catch (error) {
-    handleError(error);
+    console.error(error);
     throw error;
   } finally {
     redirect("/");
@@ -64,7 +63,7 @@ export async function updateImage({ path, image, userId }: UpdateImageParams) {
     revalidatePath(path);
     return JSON.parse(JSON.stringify(updateImage));
   } catch (error) {
-    handleError(error);
+    console.error(error);
     throw error;
   }
 }
@@ -80,7 +79,7 @@ export async function addImage({ image, userId, path }: AddImageParams) {
     revalidatePath(path);
     return JSON.parse(JSON.stringify(createdImage));
   } catch (error) {
-    handleError(error);
+    console.error(error);
     throw error;
   }
 }
@@ -95,7 +94,7 @@ export async function getImageById(imageId: string) {
     }
     return JSON.parse(JSON.stringify(image));
   } catch (error) {
-    handleError(error);
+    console.error(error);
     throw error;
   }
 }

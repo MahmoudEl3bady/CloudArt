@@ -5,19 +5,21 @@ import { getUserById } from "@/lib/actions/user";
 import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export default async function Home({ searchParams }: any) {
   const { page: sPage, searchQuery: searchQ } = await searchParams;
   const page = Number(sPage) || 1;
   const clerkUser = await currentUser();
-  if (!clerkUser) redirect("/sign-in");
-  const user = await getUserById(clerkUser?.id as string);
-  const images = await getUserImages({
-    userId: user._id as string,
-    page,
-    limit: 6,
-  }) as ImagesResponse;
+  let images: ImagesResponse | undefined;
+  if (clerkUser) {
+    const user = await getUserById(clerkUser?.id as string);
+
+    images = (await getUserImages({
+      userId: user._id as string,
+      page,
+      limit: 6,
+    })) as ImagesResponse;
+  }
 
   return (
     <main className="">
@@ -40,14 +42,16 @@ export default async function Home({ searchParams }: any) {
           ))}
         </ul>
       </section>
-      <section className="sm:mt-12">
-        <Collection
-          hasSearch={true}
-          images={images}
-          totalPages={images.totalPages}
-          page={page}
-        />
-      </section>
+      {clerkUser && (
+        <section className="sm:mt-12">
+          <Collection
+            hasSearch={true}
+            images={images}
+            totalPages={images?.totalPages}
+            page={page}
+          />
+        </section>
+      )}
     </main>
   );
 }

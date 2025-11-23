@@ -5,7 +5,6 @@ import { connectToDatabase } from "@/db/mongoose";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 
-
 export const createUser = async (user: CreateUserParams) => {
   try {
     await connectToDatabase();
@@ -16,7 +15,7 @@ export const createUser = async (user: CreateUserParams) => {
   }
 };
 
-export async function getUserById(userId:string) {
+export async function getUserById(userId: string) {
   try {
     await connectToDatabase();
     const user = await User.findOne({ clerkId: userId });

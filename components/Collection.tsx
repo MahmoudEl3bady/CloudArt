@@ -30,10 +30,12 @@ interface ImageType {
 
 interface CollectionProps {
   hasSearch?: boolean;
-  images: {
-    data: ImageType[];
-    totalPages?: number;
-  };
+  images:
+    | {
+        data: ImageType[];
+        totalPages?: number;
+      }
+    | undefined;
   totalPages?: number;
   page: number;
 }
@@ -137,7 +139,9 @@ interface TransformationType {
 
 const Card = ({ image }: CardProps) => {
   const transformationType = image.transformationType;
-  const transformation = transformationTypes[transformationType] as TransformationType ;
+  const transformation = transformationTypes[
+    transformationType
+  ] as TransformationType;
 
   if (!transformation || !transformation.icon) {
     console.error(`Invalid transformation type: ${transformationType}`);
