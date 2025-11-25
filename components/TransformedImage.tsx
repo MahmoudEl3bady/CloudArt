@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { dataUrl, debounce, download, getImageSize } from "@/lib/utils";
 import { CldImage, getCldImageUrl } from "next-cloudinary";
 import { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
@@ -14,12 +14,15 @@ const TransformedImage = ({
   hasDownload,
 }: TransformedImageProps) => {
   const downLoadHandler = () => {
-    download(getCldImageUrl({
-      width:image?.width,
-      height:image?.height,
-      src:image?.secureURL,
-      ...transformationConfig
-    } as any),title);
+    download(
+      getCldImageUrl({
+        width: image?.width,
+        height: image?.height,
+        src: image?.secureURL,
+        ...transformationConfig,
+      } as any),
+      title
+    );
   };
   return (
     <div className="flex flex-col gap-4">
@@ -45,7 +48,7 @@ const TransformedImage = ({
             width={getImageSize(type, image, "width")}
             height={getImageSize(type, image, "height")}
             src={image?.secureURL}
-            alt={image.title}
+            alt="Alt"
             sizes={"(max-width: 767px) 100vw, 50vw"}
             placeholder={dataUrl as PlaceholderValue}
             className="transformed-image"
