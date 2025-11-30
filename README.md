@@ -1,4 +1,4 @@
-# CloudArt 
+# CloudArt
 
 CloudArt is a powerful Next.js application that leverages AI to transform and edit images with ease using the Cloudinary API.
 <br>
@@ -15,13 +15,14 @@ https://www.loom.com/share/d3236a803a824f9cab1671e207fec793
   - Object Recolor
 - **Webhooks & Real-time Updates**
   - CloudArt uses webhooks for real-time user management and data synchronization.
-   
-##  Tech Stack
+- **Docker support for consistent deployment**
+
+## Tech Stack
 
 - Next.js 15
 - TypeScript
 - MongoDB
-- Cloudinary 
+- Cloudinary
 - Clerk Authentication
 - Tailwind CSS
 - Shadcn-UI
@@ -35,20 +36,72 @@ https://www.loom.com/share/d3236a803a824f9cab1671e207fec793
 
 ## Getting Started
 
-1. Clone and install:
-   ```bash
-   git clone https://github.com/MahmoudEl3bady/CloudArt.git
-   cd CloudArt
-   npm install
+## Setup with Docker
 
-2. Configure environment variables:
-    ```
-    NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-    NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-    MONOGO_URL=your_mongodb_url
-    WEBHOOK_SECRET=your_clerk_webhook_secret
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
-    CLERK_SECRET_KEY=your_clerk_secret
-    CLOUDINARY_API_KEY=your_cloudinary_key
-    CLOUDINARY_API_SECRET=your_cloudinary_secret
-    CLOUDINARY_CLOUD_NAME=your_cloudinary_name
+### 1. Clone the Repository
+
+```
+git clone https://github.com/MahmoudEl3bady/CloudArt.git
+cd CloudArt
+```
+
+### 2. Add Environment Variables
+
+```
+cp .env.docker.example .env.docker
+```
+
+Edit `.env.docker` and fill in:
+
+```
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+WEBHOOK_SECRET=
+
+MONGODB_URL=
+
+CLOUDINARY_URL=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+```
+
+## External Services Configuration
+
+### MongoDB
+
+- Add your server IP or `0.0.0.0/0` temporarily for testing.
+
+### Clerk
+
+- Add a webhook endpoint pointing to `/api/webhooks/clerk`
+- Copy webhook secret into `.env.docker`
+
+## Build and Run with Docker
+
+```
+docker build -t cloudart .
+docker run -d   --name cloudart-app   -p 3000:3000   --env-file .env.docker   --restart unless-stopped   cloudart
+```
+
+Check logs:
+
+```
+docker logs -f cloudart-app
+```
+
+Visit:
+
+```
+http://localhost:3000
+```
+
+Rebuild after changes:
+
+```
+docker stop cloudart-app && docker rm cloudart-app
+docker build --no-cache -t cloudart .
+docker run -d --name cloudart-app -p 3000:3000 --env-file .env.docker cloudart
+```
