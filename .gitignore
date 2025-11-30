@@ -39,3 +39,12 @@ next-env.d.ts
 /.clerk/
 
 .env
+.env*
+
+.env.docker
+
+# Docker volumes (if using named volumes)
+docker-volumes/
+
+# Docker build cache
+.docker/

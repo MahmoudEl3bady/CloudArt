@@ -18,7 +18,7 @@ import { useMemo } from "react";
 
 type TransformationTypeKey = keyof typeof transformationTypes;
 
-interface ImageType {
+export interface ImageType {
   _id: string;
   title: string;
   transformationType: TransformationTypeKey;
@@ -28,7 +28,7 @@ interface ImageType {
   config: Record<string, any>;
 }
 
-interface CollectionProps {
+export interface CollectionProps {
   hasSearch?: boolean;
   images:
     | {

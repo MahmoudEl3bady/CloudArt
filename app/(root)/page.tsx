@@ -1,6 +1,6 @@
-import { Collection } from "@/components/Collection";
+import { Collection, ImageType } from "@/components/Collection";
 import { navLinks } from "@/constants";
-import { getUserImages } from "@/lib/actions/image";
+import { getExampleImages, getUserImages } from "@/lib/actions/image";
 import { getUserById } from "@/lib/actions/user";
 import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
@@ -21,6 +21,8 @@ export default async function Home({ searchParams }: any) {
       page,
       limit: 6,
     })) as ImagesResponse;
+  } else {
+    images = (await getExampleImages()) as any;
   }
 
   return (
@@ -87,7 +89,7 @@ export default async function Home({ searchParams }: any) {
       )}
 
       {/* User Collection */}
-      {clerkUser && images && (
+      {images && (
         <section className="sm:mt-12">
           <Collection
             hasSearch={true}

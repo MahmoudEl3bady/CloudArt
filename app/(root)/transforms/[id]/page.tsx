@@ -9,9 +9,9 @@ import { getImageById } from "@/lib/actions/image";
 import { getImageSize } from "@/lib/utils";
 // import { DeleteConfirmation } from "@/components/DeleteConfirmation";
 
-const ImageDetails = async ({ params }:{params:any}) => {
+const ImageDetails = async ({ params }: { params: any }) => {
   const { userId } = await auth();
-  const {id} = await params;
+  const { id } = await params;
   const image = await getImageById(id);
 
   return (
@@ -89,8 +89,6 @@ const ImageDetails = async ({ params }:{params:any}) => {
                 Update Image
               </Link>
             </Button>
-
-            {/* <DeleteConfirmation imageId={image._id} /> */}
           </div>
         )}
       </section>

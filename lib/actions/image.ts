@@ -156,3 +156,19 @@ export const getUserImages = async ({
     return [];
   }
 };
+
+export const getExampleImages = async () => {
+  try {
+    await connectToDatabase();
+    const data = await Image.find({
+      example: true,
+    });
+    return {
+      data: JSON.parse(JSON.stringify(data)),
+      totalImages: 5,
+    };
+  } catch (error) {
+    console.error("Failed to retrieve user's recent images:", error);
+    return [];
+  }
+};
