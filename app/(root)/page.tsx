@@ -44,7 +44,14 @@ export default async function Home({ searchParams }: any) {
               className="flex flex-col items-center justify-center gap-2"
             >
               <li className="w-fit rounded-full bg-white p-4 hover:scale-110 transition-transform">
-                <Image src={link.icon} alt="logo" width={24} height={24} />
+                <Image
+                  src={link.icon}
+                  priority={true}
+                  loading="eager"
+                  alt="logo"
+                  width={24}
+                  height={24}
+                />
               </li>
               <p className="p-14-medium text-center text-white">{link.label}</p>
             </Link>

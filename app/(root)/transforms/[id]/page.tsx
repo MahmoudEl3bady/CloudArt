@@ -67,6 +67,8 @@ const ImageDetails = async ({ params }: { params: any }) => {
               height={getImageSize(image.transformationType, image, "height")}
               src={image.secureURL}
               alt="image"
+              preload={true}
+              fetchPriority="high"
               className="transformation-original_image"
             />
           </div>

@@ -13,9 +13,7 @@ import {
 } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
   aspectRatioOptions,
@@ -31,11 +29,15 @@ import { getCldImageUrl } from "next-cloudinary";
 import { useRouter } from "next/navigation";
 import TransformedImage from "./TransformedImage";
 import { addImage, updateImage } from "@/lib/actions/image";
+import {
+  DynamicMediaUploader,
+  DynamicTransformedImage,
+} from "@/lib/dynamic-components";
 
 export const formSchema = z.object({
   title: z.string(),
   aspectRatio: z.string().optional(),
-  color: z.string().optional(),  
+  color: z.string().optional(),
   prompt: z.string().optional(),
   publicId: z.string(),
 });
@@ -99,44 +101,43 @@ const TransformationForm = ({
         prompt: values.prompt,
         color: values.color,
       };
-      startTransition(() => {
-      })   
+      startTransition(() => {});
       if (action === "Add") {
         try {
           const newImage = await addImage({
             image: imageData,
-          userId,
-          path: "/",
-        });
-        if (newImage) {
-          form.reset();
-          setImage(data);
-          router.push(`/transforms/${newImage._id}`);
+            userId,
+            path: "/",
+          });
+          if (newImage) {
+            form.reset();
+            setImage(data);
+            router.push(`/transforms/${newImage._id}`);
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
       }
-    }
 
-    if (action === "Update") {
-      try {
-        const updatedImage = await updateImage({
-          image: {
-            ...imageData,
-            _id: data._id,
-          },
-          userId,
-          path: `/transforms/${data._id}`,
-        });
-        if (updatedImage) {
-          router.push(`/transforms/${updatedImage._id}`);
+      if (action === "Update") {
+        try {
+          const updatedImage = await updateImage({
+            image: {
+              ...imageData,
+              _id: data._id,
+            },
+            userId,
+            path: `/transforms/${data._id}`,
+          });
+          if (updatedImage) {
+            router.push(`/transforms/${updatedImage._id}`);
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
       }
     }
-  }
-  setIsSubmitting(false);
+    setIsSubmitting(false);
   }
 
   const onSelectFieldHandler = (
@@ -202,7 +203,7 @@ const TransformationForm = ({
           className="w-full"
           render={({ field }) => <Input {...field} className="input-field" />}
         />
-        {(type === "fill") && (
+        {type === "fill" && (
           <CustomField
             control={form.control}
             name="aspectRatio"
@@ -267,7 +268,7 @@ const TransformationForm = ({
                     className="input-field"
                     onChange={(e) =>
                       onInputChangeHandler(
-                        "color", 
+                        "color",
                         e.target.value,
                         "recolor",
                         field.onChange
@@ -286,7 +287,7 @@ const TransformationForm = ({
             name="publicId"
             className="flex size-full flex-col"
             render={({ field }) => (
-              <MediaUploader
+              <DynamicMediaUploader
                 onValueChange={field.onChange}
                 setImage={setImage}
                 publicId={field.value}
@@ -296,7 +297,7 @@ const TransformationForm = ({
             )}
           />
 
-          <TransformedImage
+          <DynamicTransformedImage
             image={image}
             type={type}
             title={form.getValues().title}
