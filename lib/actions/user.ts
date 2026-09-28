@@ -1,5 +1,6 @@
 "use server";
 
+import { currentUser } from "@clerk/nextjs/server";
 import { User } from "@/db/models/user.model";
 import { connectToDatabase } from "@/db/mongoose";
 import { handleError } from "../utils";
@@ -18,8 +19,31 @@ export const createUser = async (user: CreateUserParams) => {
 export async function getUserById(userId: string) {
   try {
     await connectToDatabase();
-    const user = await User.findOne({ clerkId: userId });
-    if (!user) throw new Error("User not found");
+
+    let user = await User.findOne({ clerkId: userId });
+
+    if (!user) {
+      const cu = await currentUser();
+      if (!cu || cu.id !== userId) throw new Error("User not found");
+
+      const email = cu.emailAddresses[0]?.emailAddress ?? "";
+
+      user = await User.findOneAndUpdate(
+        { clerkId: cu.id },
+        {
+          $setOnInsert: {
+            clerkId: cu.id,
+            email,
+            username: cu.username ?? email.split("@")[0],
+            firstName: cu.firstName ?? "",
+            lastName: cu.lastName ?? "",
+            photo: cu.imageUrl,
+          },
+        },
+        { upsert: true, new: true },
+      );
+    }
+
     return JSON.parse(JSON.stringify(user));
   } catch (error) {
     handleError(error);
