@@ -55,7 +55,7 @@ export async function updateImage({ path, image, userId }: UpdateImageParams) {
     const updatedImage = await Image.findOneAndUpdate(
       { _id: image._id },
       { ...image },
-      { new: true }
+      { new: true },
     );
     if (!updatedImage) {
       throw new Error("Image not found");
