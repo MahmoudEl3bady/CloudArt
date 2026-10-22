@@ -2,15 +2,20 @@
   "name": "cloudart",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9"
+  },
+  "packageManager": "pnpm@12.6.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "doctor": "npx react-doctor@latest"
+    "check": "pnpm lint && pnpm typecheck && pnpm format:check && pnpm build"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.0.2",
