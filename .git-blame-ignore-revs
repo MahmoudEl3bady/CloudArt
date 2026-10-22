@@ -1,0 +1,5 @@
+# Commits to ignore for git blame (opt in per clone:
+# git config blame.ignoreRevsFile .git-blame-ignore-revs)
+
+# style: apply prettier
+19b4136b99adb04f177cdaaac0b8b860c59319ec
