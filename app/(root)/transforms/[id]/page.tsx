@@ -9,7 +9,11 @@ import { getImageById } from "@/lib/actions/image";
 import { getImageSize } from "@/lib/utils";
 // import { DeleteConfirmation } from "@/components/DeleteConfirmation";
 
-const ImageDetails = async ({ params }: { params: any }) => {
+type PageProps = {
+  params: Promise<{ id: string }>;
+};
+
+const ImageDetails = async ({ params }: PageProps) => {
   const { userId } = await auth();
   const { id } = await params;
   const image = await getImageById(id);

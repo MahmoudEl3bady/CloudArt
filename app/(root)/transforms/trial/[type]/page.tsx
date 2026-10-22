@@ -6,13 +6,14 @@ import TrialTransformForm from "@/components/TrialTransformForm";
 
 type TransformationTypeKey = keyof typeof transformationTypes;
 
-interface PageProps {
-  type: TransformationTypeKey;
-}
+type PageProps = {
+  params: Promise<{ type: string }>;
+};
 
-const TrialTransformationsType = async ({ params }: { params: any }) => {
-  const { type } = (await params) as PageProps;
-  const transformation = transformationTypes[type];
+const TrialTransformationsType = async ({ params }: PageProps) => {
+  const { type } = await params;
+  // The route segment is user-controlled; narrow the string to a known key.
+  const transformation = transformationTypes[type as TransformationTypeKey];
 
   return (
     <div className="mx-auto max-w-7xl">

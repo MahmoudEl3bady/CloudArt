@@ -8,7 +8,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { ImagesResponse } from "@/types";
 
-export default async function Home({ searchParams }: any) {
+type HomeProps = {
+  searchParams: Promise<{ page?: string }>;
+};
+
+export default async function Home({ searchParams }: HomeProps) {
   const { page: sPage } = await searchParams;
   const page = Number(sPage) || 1;
   const clerkUser = await currentUser();
