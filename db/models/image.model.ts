@@ -32,4 +32,5 @@ const ImageSchema = new Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-export const Image: Model<any> = mongoose.models.Image || model("Image", ImageSchema);
+export const Image: Model<ImageDoc> =
+  mongoose.models.Image || model<ImageDoc>("Image", ImageSchema);

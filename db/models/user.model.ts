@@ -1,5 +1,16 @@
 import mongoose, { model, Schema, Model } from "mongoose";
 
+export interface UserDoc extends mongoose.Document {
+  clerkId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  username?: string;
+  password?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 const userSchema = new Schema({
   clerkId: { type: String, required: true, unique: true },
   firstName: { type: String, required: true },
@@ -12,4 +23,4 @@ const userSchema = new Schema({
 });
 
 // Check if the model already exists before compiling it
-export const User: Model<any> = mongoose.models.User || model("User", userSchema);
+export const User: Model<UserDoc> = mongoose.models.User || model<UserDoc>("User", userSchema);
