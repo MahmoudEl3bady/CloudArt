@@ -6,14 +6,12 @@ import { connectToDatabase } from "@/db/mongoose";
 import { clerkClient } from "@clerk/nextjs/server";
 import { deleteUser, updateUser } from "@/lib/actions/user";
 import { NextResponse } from "next/server";
+import { serverEnv } from "@/lib/env.server";
 
 export async function POST(req: Request) {
-  const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
-  if (!WEBHOOK_SECRET) {
-    throw new Error(
-      "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
-    );
-  }
+  // WEBHOOK_SECRET is validated at boot by lib/env.server.ts; a missing
+  // secret can no longer throw here at request time.
+  const WEBHOOK_SECRET = serverEnv.WEBHOOK_SECRET;
 
   // Get the headers
   const headerPayload = await headers();
