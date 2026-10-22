@@ -15,7 +15,17 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm lint && pnpm typecheck && pnpm format:check && pnpm build"
+    "check": "pnpm lint && pnpm typecheck && pnpm format:check && pnpm build",
+    "prepare": "husky || true"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,mjs,json,md,yml,yaml,css}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@clerk/nextjs": "^6.0.2",
@@ -49,6 +59,8 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "16.0.7",
     "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
     "postcss": "^8.4.31",
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
