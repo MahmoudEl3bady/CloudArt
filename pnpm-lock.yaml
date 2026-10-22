@@ -74,6 +74,9 @@ importers:
       react-hook-form:
         specifier: ^7.53.0
         version: 7.68.0(react@19.2.1)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
       svix:
         specifier: ^1.37.0
         version: 1.82.0

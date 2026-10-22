@@ -1,6 +1,3 @@
-import { subscribe } from "diagnostics_channel";
-import { config } from "process";
-
 export const navLinks = [
   {
     label: "Home",
@@ -88,7 +85,7 @@ export const aspectRatioOptions = {
     width: 1080,
     height: 1080,
   },
-  "3:4": {
+  "4:5": {
     aspectRatio: "4:5",
     label: "Instagram Portrait (4:5)",
     width: 1080,
@@ -120,5 +117,3 @@ export const defaultValues = {
   prompt: "",
   publicId: "",
 };
-
-export const creditFee = -1;

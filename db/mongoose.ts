@@ -1,6 +1,5 @@
 import mongoose, { Mongoose } from "mongoose";
-
-const MONGODB_URL = process.env.MONOGO_URL;
+import { serverEnv } from "@/lib/env.server";
 
 interface MongooseConnection {
   conn: Mongoose | null;
@@ -18,12 +17,11 @@ if (!cached) {
 
 export const connectToDatabase = async () => {
   if (cached.conn) return cached.conn;
-  if (!MONGODB_URL) throw new Error("Missing MONGODB_URL");
 
   cached.promise =
     cached.promise ||
-    mongoose.connect(MONGODB_URL, {
-      dbName: "imageEditor",
+    mongoose.connect(serverEnv.MONGODB_URL, {
+      dbName: serverEnv.MONGODB_DB_NAME,
       bufferCommands: false,
     });
 

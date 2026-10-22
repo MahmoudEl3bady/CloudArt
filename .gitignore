@@ -39,8 +39,13 @@ next-env.d.ts
 /.clerk/
 
 .env
+.env*
+!.env.example
 
 .env.docker
+
+# Lighthouse reports (never commit these)
+localhost_*.report.html
 
 # Docker volumes (if using named volumes)
 docker-volumes/

@@ -7,6 +7,8 @@ import { Image } from "@/db/models/image.model";
 import { redirect } from "next/navigation";
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
+import { serverEnv } from "@/lib/env.server";
+import { clientEnv } from "@/lib/env.client";
 
 interface GetAllImagesParams {
   limit?: number;
@@ -105,9 +107,9 @@ export async function getAllImages() {
 
     // Configure cloudinary
     cloudinary.config({
-      cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_CLOUD_API_KEY,
-      api_secret: process.env.CLOUDINARY_CLOUD_API_SECRET,
+      cloud_name: clientEnv.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+      api_key: serverEnv.CLOUDINARY_API_KEY,
+      api_secret: serverEnv.CLOUDINARY_API_SECRET,
       secure: true,
     });
 
