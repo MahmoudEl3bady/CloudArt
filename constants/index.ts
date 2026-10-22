@@ -1,6 +1,3 @@
-import { subscribe } from "diagnostics_channel";
-import { config } from "process";
-
 export const navLinks = [
   {
     label: "Home",
@@ -120,5 +117,3 @@ export const defaultValues = {
   prompt: "",
   publicId: "",
 };
-
-export const creditFee = -1;
