@@ -23,7 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Download, AlertCircle, Sparkles } from "lucide-react";
 import { Alert, AlertDescription } from "./ui/alert";
-import type { Transformations } from "@/types";
+import type { IImage, Transformations } from "@/types";
 
 export const formSchema = z.object({
   title: z.string(),
@@ -42,7 +42,7 @@ interface TrialTransformFormProps {
 
 const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
   const transformationType = transformationTypes[type];
-  const [image, setImage] = useState<any>(null);
+  const [image, setImage] = useState<Partial<IImage> | null>(null);
   const [newTransformation, setNewTransformation] = useState<Transformations | null>(null);
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformationConfig, setTransformationConfig] = useState<Transformations | null>(null);
@@ -60,7 +60,7 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
   const onSelectFieldHandler = (value: string, onChangeField: (value: string) => void) => {
     const imageSize = aspectRatioOptions[value as AspectRatioKey];
 
-    setImage((prevState: any) => ({
+    setImage((prevState) => ({
       ...prevState,
       aspectRatio: imageSize.aspectRatio,
       width: imageSize.width,
@@ -78,13 +78,21 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
     onChangeField: (value: string) => void,
   ) => {
     debounce(() => {
-      setNewTransformation((prevState: any) => ({
-        ...prevState,
-        [type]: {
-          ...prevState?.[type],
-          [fieldName === "prompt" ? "prompt" : "to"]: value,
-        },
-      }));
+      // `type` is a dynamic transformation key ("remove"/"recolor" at the
+      // call sites); TS cannot check the computed key against Transformations.
+      setNewTransformation((prevState) => {
+        const prevConfig = (prevState?.[type as keyof Transformations] ?? {}) as Record<
+          string,
+          unknown
+        >;
+        return {
+          ...prevState,
+          [type]: {
+            ...prevConfig,
+            [fieldName === "prompt" ? "prompt" : "to"]: value,
+          },
+        } as Transformations;
+      });
     }, 1000)();
 
     return onChangeField(value);

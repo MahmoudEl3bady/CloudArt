@@ -117,7 +117,7 @@ interface TransformationType {
   type: string;
   title: string;
   subTitle: string;
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   icon: string;
 }
 

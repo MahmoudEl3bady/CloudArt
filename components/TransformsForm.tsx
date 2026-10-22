@@ -23,7 +23,7 @@ import { getCldImageUrl } from "next-cloudinary";
 import { useRouter } from "next/navigation";
 import { addImage, updateImage } from "@/lib/actions/image";
 import { DynamicMediaUploader, DynamicTransformedImage } from "@/lib/dynamic-components";
-import type { TransformationFormProps, Transformations } from "@/types";
+import type { IImage, TransformationFormProps, Transformations } from "@/types";
 
 export const formSchema = z.object({
   title: z.string(),
@@ -41,7 +41,7 @@ const TransformationForm = ({
   config = null,
 }: TransformationFormProps) => {
   const transformationType = transformationTypes[type];
-  const [image, setImage] = useState(data);
+  const [image, setImage] = useState<Partial<IImage> | null>(data ?? null);
   const [newTransformation, setNewTransformation] = useState<Transformations | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
@@ -101,7 +101,7 @@ const TransformationForm = ({
           });
           if (newImage) {
             form.reset();
-            setImage(data);
+            setImage(data ?? null);
             router.push(`/transforms/${newImage._id}`);
           }
         } catch (error) {
@@ -133,7 +133,7 @@ const TransformationForm = ({
   const onSelectFieldHandler = (value: string, onChangeField: (value: string) => void) => {
     const imageSize = aspectRatioOptions[value as AspectRatioKey];
 
-    setImage((prevState: any) => ({
+    setImage((prevState) => ({
       ...prevState,
       aspectRatio: imageSize.aspectRatio,
       width: imageSize.width,
@@ -152,13 +152,21 @@ const TransformationForm = ({
     onChangeField: (value: string) => void,
   ) => {
     debounce(() => {
-      setNewTransformation((prevState: any) => ({
-        ...prevState,
-        [type]: {
-          ...prevState?.[type],
-          [fieldName === "prompt" ? "prompt" : "to"]: value,
-        },
-      }));
+      // `type` is a dynamic transformation key ("remove"/"recolor" at the
+      // call sites); TS cannot check the computed key against Transformations.
+      setNewTransformation((prevState) => {
+        const prevConfig = (prevState?.[type as keyof Transformations] ?? {}) as Record<
+          string,
+          unknown
+        >;
+        return {
+          ...prevState,
+          [type]: {
+            ...prevConfig,
+            [fieldName === "prompt" ? "prompt" : "to"]: value,
+          },
+        } as Transformations;
+      });
     }, 1000)();
 
     return onChangeField(value);

@@ -7,8 +7,9 @@ import { Image } from "@/db/models/image.model";
 import { redirect } from "next/navigation";
 import mongoose from "mongoose";
 import type { AddImageParams, UpdateImageParams } from "@/types";
+import type { Query } from "mongoose";
 
-const populateUser = async (query: any) => {
+const populateUser = async <T extends Query<unknown, unknown>>(query: T) => {
   return query.populate({
     path: "author",
     model: User,

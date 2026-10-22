@@ -19,9 +19,9 @@ const TransformedImage = ({
       getCldImageUrl({
         width: image?.width,
         height: image?.height,
-        src: image?.secureURL,
+        src: image?.secureURL ?? "",
         ...transformationConfig,
-      } as any),
+      }),
       title,
     );
   };

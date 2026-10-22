@@ -101,12 +101,7 @@ export type Transformations = {
   removeBackground?: boolean;
 };
 
-export type TransformationTypeKey =
-  | "restore"
-  | "fill"
-  | "remove"
-  | "recolor"
-  | "removeBackground";
+export type TransformationTypeKey = "restore" | "fill" | "remove" | "recolor" | "removeBackground";
 
 // ====== URL QUERY PARAMS
 export type FormUrlQueryParams = {
