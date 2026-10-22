@@ -1,4 +1,4 @@
-import { Collection, ImageType } from "@/components/Collection";
+import { Collection } from "@/components/Collection";
 import { navLinks } from "@/constants";
 import { getExampleImages, getUserImages } from "@/lib/actions/image";
 import { getUserById } from "@/lib/actions/user";

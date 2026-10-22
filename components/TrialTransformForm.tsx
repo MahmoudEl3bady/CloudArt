@@ -43,7 +43,7 @@ interface TrialTransformFormProps {
   type: TransformationTypeKey;
 }
 
-const TrialTransformForm = ({ action, type }: TrialTransformFormProps) => {
+const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
   const transformationType = transformationTypes[type];
   const [image, setImage] = useState<any>(null);
   const [newTransformation, setNewTransformation] =
@@ -124,7 +124,7 @@ const TrialTransformForm = ({ action, type }: TrialTransformFormProps) => {
 
       // Show download prompt after successful transformation
       setTimeout(() => setShowDownloadPrompt(true), 1000);
-    } catch (error) {
+    } catch {
       toast({
         title: "Transformation Failed",
         description: "Please try again or sign up for better support",

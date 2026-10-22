@@ -53,7 +53,7 @@ export async function getUserById(userId: string) {
 export const updateUser = async (userId: string, user: UpdateUserParams) => {
   try {
     await connectToDatabase();
-    const updatedUser = User.findOneAndUpdate({ clerkId: userId }, user, {
+    User.findOneAndUpdate({ clerkId: userId }, user, {
       new: true,
     });
     return JSON.parse(JSON.stringify(updateUser));
@@ -65,7 +65,7 @@ export const updateUser = async (userId: string, user: UpdateUserParams) => {
 export const deleteUser = async (userId: string) => {
   try {
     await connectToDatabase();
-    const deletedUser = User.findOneAndDelete({ clerkId: userId });
+    User.findOneAndDelete({ clerkId: userId });
     revalidatePath("/");
     return JSON.parse(JSON.stringify(deleteUser));
   } catch (error) {

@@ -23,10 +23,8 @@ import {
 import { CustomField } from "./CustomField";
 import { useEffect, useState, useTransition } from "react";
 import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils";
-import MediaUploader from "./MediaUploader";
 import { getCldImageUrl } from "next-cloudinary";
 import { useRouter } from "next/navigation";
-import TransformedImage from "./TransformedImage";
 import { addImage, updateImage } from "@/lib/actions/image";
 import {
   DynamicMediaUploader,
@@ -55,7 +53,7 @@ const TransformationForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformationConfig, setTransformationConfig] = useState(config);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const router = useRouter();
 
   const initialValues =
