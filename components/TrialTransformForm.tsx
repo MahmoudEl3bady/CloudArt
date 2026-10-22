@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Download, AlertCircle, Sparkles } from "lucide-react";
 import { Alert, AlertDescription } from "./ui/alert";
+import type { Transformations } from "@/types";
 
 export const formSchema = z.object({
   title: z.string(),

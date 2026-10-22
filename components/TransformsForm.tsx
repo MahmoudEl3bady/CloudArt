@@ -23,6 +23,7 @@ import { getCldImageUrl } from "next-cloudinary";
 import { useRouter } from "next/navigation";
 import { addImage, updateImage } from "@/lib/actions/image";
 import { DynamicMediaUploader, DynamicTransformedImage } from "@/lib/dynamic-components";
+import type { TransformationFormProps, Transformations } from "@/types";
 
 export const formSchema = z.object({
   title: z.string(),
@@ -73,7 +74,7 @@ const TransformationForm = ({
       const transformationUrl = getCldImageUrl({
         width: image?.width,
         height: image?.height,
-        src: image?.publicId,
+        src: image?.publicId ?? "",
         ...transformationConfig,
       });
 
@@ -108,7 +109,7 @@ const TransformationForm = ({
         }
       }
 
-      if (action === "Update") {
+      if (action === "Update" && data) {
         try {
           const updatedImage = await updateImage({
             image: {

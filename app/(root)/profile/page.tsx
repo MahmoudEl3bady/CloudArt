@@ -2,6 +2,7 @@ import { Collection } from "@/components/Collection";
 import { getUserImages } from "@/lib/actions/image";
 import { getUserById } from "@/lib/actions/user";
 import { currentUser } from "@clerk/nextjs/server";
+import type { ImagesResponse } from "@/types";
 
 const Profile = async () => {
   const clerkUser = await currentUser();

@@ -6,12 +6,7 @@ import { getUserById } from "./user";
 import { Image } from "@/db/models/image.model";
 import { redirect } from "next/navigation";
 import mongoose from "mongoose";
-
-interface UpdateImageParams {
-  path: string;
-  image: any; // Replace with your image type
-  userId: string;
-}
+import type { AddImageParams, UpdateImageParams } from "@/types";
 
 const populateUser = async (query: any) => {
   return query.populate({

@@ -6,6 +6,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import type { ImagesResponse } from "@/types";
 
 export default async function Home({ searchParams }: any) {
   const { page: sPage } = await searchParams;
@@ -22,7 +23,9 @@ export default async function Home({ searchParams }: any) {
       limit: 6,
     })) as ImagesResponse;
   } else {
-    images = (await getExampleImages()) as any;
+    // TODO(P3): getExampleImages returns { data, totalImages } with no
+    // totalPages; unify the return shape instead of casting.
+    images = (await getExampleImages()) as unknown as ImagesResponse;
   }
 
   return (

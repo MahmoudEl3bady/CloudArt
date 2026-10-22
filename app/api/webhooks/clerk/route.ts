@@ -7,6 +7,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { deleteUser, updateUser } from "@/lib/actions/user";
 import { NextResponse } from "next/server";
 import { serverEnv } from "@/lib/env.server";
+import type { UpdateUserParams } from "@/types";
 
 export async function POST(req: Request) {
   // WEBHOOK_SECRET is validated at boot by lib/env.server.ts; a missing

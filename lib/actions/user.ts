@@ -5,6 +5,7 @@ import { User } from "@/db/models/user.model";
 import { connectToDatabase } from "@/db/mongoose";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
+import type { CreateUserParams, UpdateUserParams } from "@/types";
 
 export const createUser = async (user: CreateUserParams) => {
   try {

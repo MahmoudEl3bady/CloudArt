@@ -10,24 +10,13 @@ import { Button } from "./ui/button";
 import { Pagination, PaginationContent, PaginationNext, PaginationPrevious } from "./ui/pagination";
 import { Search } from "./Search";
 import { useMemo } from "react";
-
-type TransformationTypeKey = keyof typeof transformationTypes;
-
-export interface ImageType {
-  _id: string;
-  title: string;
-  transformationType: TransformationTypeKey;
-  secureURL: string;
-  width: number;
-  height: number;
-  config: Record<string, any>;
-}
+import type { IImage } from "@/types";
 
 export interface CollectionProps {
   hasSearch?: boolean;
   images:
     | {
-        data: ImageType[];
+        data: IImage[];
         totalPages?: number;
       }
     | undefined;
@@ -122,7 +111,7 @@ export const Collection = ({
 };
 
 interface CardProps {
-  image: ImageType;
+  image: IImage;
 }
 interface TransformationType {
   type: string;
