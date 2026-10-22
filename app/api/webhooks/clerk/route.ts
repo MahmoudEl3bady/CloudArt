@@ -55,10 +55,25 @@ export async function POST(req: Request) {
   if (eventType === "user.created") {
     const { id, email_addresses, image_url, first_name, last_name } = evt.data;
 
-    const userName = email_addresses[0].email_address.split("@")[0];
+    // Clerk can send a user with no email addresses yet; reject instead of
+    // crashing on email_addresses[0] (noUncheckedIndexedAccess).
+    if (email_addresses.length === 0) {
+      return new Response("Error occurred -- user has no email addresses", {
+        status: 400,
+      });
+    }
+
+    const primaryEmail = email_addresses[0];
+    if (!primaryEmail) {
+      return new Response("Error occurred -- user has no email addresses", {
+        status: 400,
+      });
+    }
+
+    const userName = primaryEmail.email_address.split("@")[0] ?? primaryEmail.email_address;
     const user = {
       clerkId: id,
-      email: email_addresses[0].email_address,
+      email: primaryEmail.email_address,
       firstName: first_name,
       lastName: last_name,
       username: userName,
