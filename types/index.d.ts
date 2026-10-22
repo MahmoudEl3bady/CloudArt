@@ -83,12 +83,6 @@ declare type FormUrlQueryParams = {
   value: string | number | null;
 };
 
-declare type UrlQueryParams = {
-  params: string;
-  key: string;
-  value: string | null;
-};
-
 declare type RemoveUrlQueryParams = {
   searchParams: string;
   keysToRemove: string[];
@@ -98,15 +92,6 @@ declare type  ImagesResponse = {
   data: any[];
   totalPages: number;
 }
-
-declare type Params = {
-  params: { id: string; type: TransformationTypeKey };
-}; 
-
-declare type SearchParamProps = {
-  params: { id: string; type?: TransformationTypeKey };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
 
 declare type TransformationFormProps = {
   action: "Add" | "Update";

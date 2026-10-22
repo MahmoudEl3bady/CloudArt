@@ -19,13 +19,3 @@ export const DynamicTransformedImage = dynamic(
     ssr: false,
   }
 );
-
-export const DynamicCollection = dynamic(
-  () =>
-    import("@/components/Collection").then((mod) => ({
-      default: mod.Collection,
-    })),
-  {
-    loading: () => <div className="text-center py-8">Loading images...</div>,
-  }
-);
