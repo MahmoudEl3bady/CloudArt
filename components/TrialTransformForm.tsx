@@ -13,11 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  aspectRatioOptions,
-  defaultValues,
-  transformationTypes,
-} from "@/constants";
+import { aspectRatioOptions, defaultValues, transformationTypes } from "@/constants";
 import { CustomField } from "./CustomField";
 import { useEffect, useState, useCallback } from "react";
 import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils";
@@ -46,11 +42,9 @@ interface TrialTransformFormProps {
 const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
   const transformationType = transformationTypes[type];
   const [image, setImage] = useState<any>(null);
-  const [newTransformation, setNewTransformation] =
-    useState<Transformations | null>(null);
+  const [newTransformation, setNewTransformation] = useState<Transformations | null>(null);
   const [isTransforming, setIsTransforming] = useState(false);
-  const [transformationConfig, setTransformationConfig] =
-    useState<Transformations | null>(null);
+  const [transformationConfig, setTransformationConfig] = useState<Transformations | null>(null);
   const [showDownloadPrompt, setShowDownloadPrompt] = useState(false);
   const { toast } = useToast();
 
@@ -62,10 +56,7 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
     },
   });
 
-  const onSelectFieldHandler = (
-    value: string,
-    onChangeField: (value: string) => void
-  ) => {
+  const onSelectFieldHandler = (value: string, onChangeField: (value: string) => void) => {
     const imageSize = aspectRatioOptions[value as AspectRatioKey];
 
     setImage((prevState: any) => ({
@@ -83,7 +74,7 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
     fieldName: string,
     value: string,
     type: string,
-    onChangeField: (value: string) => void
+    onChangeField: (value: string) => void,
   ) => {
     debounce(() => {
       setNewTransformation((prevState: any) => ({
@@ -111,9 +102,7 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
     setIsTransforming(true);
 
     try {
-      setTransformationConfig(
-        deepMergeObjects(newTransformation, transformationConfig)
-      );
+      setTransformationConfig(deepMergeObjects(newTransformation, transformationConfig));
       setNewTransformation(null);
 
       toast({
@@ -140,7 +129,7 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
       description: (
         <div className="mt-2 space-y-2">
           <p>Create a free account to:</p>
-          <ul className="list-disc list-inside text-sm space-y-1">
+          <ul className="list-inside list-disc space-y-1 text-sm">
             <li>Download high-quality images</li>
             <li>Save your transformations</li>
             <li>Access unlimited edits</li>
@@ -163,12 +152,9 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
       <Alert className="border-blue-200 bg-blue-50">
         <Sparkles className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-blue-800">
-          <strong>Try it free!</strong> You're testing{" "}
-          {transformationType.title} without signing up.
-          <Link
-            href="/sign-up"
-            className="ml-2 underline font-semibold hover:text-blue-600"
-          >
+          <strong>Try it free!</strong> You're testing {transformationType.title} without signing
+          up.
+          <Link href="/sign-up" className="ml-2 font-semibold underline hover:text-blue-600">
             Create account to save
           </Link>
         </AlertDescription>
@@ -183,11 +169,7 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
             formLabel="Image Title"
             className="w-full"
             render={({ field }) => (
-              <Input
-                {...field}
-                className="input-field"
-                placeholder="My edited image"
-              />
+              <Input {...field} className="input-field" placeholder="My edited image" />
             )}
           />
 
@@ -200,9 +182,7 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
               className="w-full"
               render={({ field }) => (
                 <Select
-                  onValueChange={(value) =>
-                    onSelectFieldHandler(value, field.onChange)
-                  }
+                  onValueChange={(value) => onSelectFieldHandler(value, field.onChange)}
                   value={field.value}
                 >
                   <SelectTrigger className="select-field">
@@ -226,26 +206,17 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
               <CustomField
                 control={form.control}
                 name="prompt"
-                formLabel={
-                  type === "remove" ? "Object to remove" : "Object to recolor"
-                }
+                formLabel={type === "remove" ? "Object to remove" : "Object to recolor"}
                 className="w-full"
                 render={({ field }) => (
                   <Input
                     value={field.value}
                     className="input-field"
                     placeholder={
-                      type === "remove"
-                        ? "e.g., person, car"
-                        : "e.g., shirt, background"
+                      type === "remove" ? "e.g., person, car" : "e.g., shirt, background"
                     }
                     onChange={(e) =>
-                      onInputChangeHandler(
-                        "prompt",
-                        e.target.value,
-                        type,
-                        field.onChange
-                      )
+                      onInputChangeHandler("prompt", e.target.value, type, field.onChange)
                     }
                   />
                 )}
@@ -263,12 +234,7 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
                       className="input-field"
                       placeholder="e.g., blue, red, #FF5733"
                       onChange={(e) =>
-                        onInputChangeHandler(
-                          "color",
-                          e.target.value,
-                          "recolor",
-                          field.onChange
-                        )
+                        onInputChangeHandler("color", e.target.value, "recolor", field.onChange)
                       }
                     />
                   )}
@@ -318,13 +284,9 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
             {showDownloadPrompt && (
               <Alert className="border-yellow-200 bg-yellow-50">
                 <AlertCircle className="h-4 w-4 text-yellow-600" />
-                <AlertDescription className="text-yellow-800 flex items-center justify-between">
+                <AlertDescription className="flex items-center justify-between text-yellow-800">
                   <span>Sign up to download your transformed image!</span>
-                  <Button
-                    asChild
-                    size="sm"
-                    className="bg-yellow-600 hover:bg-yellow-700"
-                  >
+                  <Button asChild size="sm" className="bg-yellow-600 hover:bg-yellow-700">
                     <Link href="/sign-up">Sign Up Free</Link>
                   </Button>
                 </AlertDescription>
@@ -347,13 +309,11 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
 
       {/* Features Comparison */}
       <div className="mt-8 rounded-lg border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50 p-6">
-        <h3 className="text-lg font-bold text-purple-900 mb-4">
-          ✨ Upgrade to Full Access
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h3 className="mb-4 text-lg font-bold text-purple-900">✨ Upgrade to Full Access</h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <h4 className="font-semibold text-gray-700">Trial Mode</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
+            <ul className="space-y-1 text-sm text-gray-600">
               <li>✓ Try all transformations</li>
               <li>✗ Can't save images</li>
               <li>✗ Can't download</li>
@@ -362,7 +322,7 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
           </div>
           <div className="space-y-2">
             <h4 className="font-semibold text-purple-700">Free Account</h4>
-            <ul className="text-sm text-purple-600 space-y-1">
+            <ul className="space-y-1 text-sm text-purple-600">
               <li>✓ Save all transformations</li>
               <li>✓ Download high-quality images</li>
               <li>✓ Access history</li>
@@ -370,26 +330,18 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
             </ul>
           </div>
         </div>
-        <Button
-          asChild
-          className="w-full mt-4 bg-purple-600 hover:bg-purple-700"
-        >
+        <Button asChild className="mt-4 w-full bg-purple-600 hover:bg-purple-700">
           <Link href="/sign-up">Create Free Account →</Link>
         </Button>
       </div>
 
       {/* Help Section */}
-      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <h4 className="font-semibold text-gray-800 mb-2">
-          How to use {transformationType.title}:
-        </h4>
-        <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <h4 className="mb-2 font-semibold text-gray-800">How to use {transformationType.title}:</h4>
+        <ol className="list-inside list-decimal space-y-1 text-sm text-gray-600">
           <li>Upload an image using the upload area</li>
           {(type === "remove" || type === "recolor") && (
-            <li>
-              Enter the object you want to{" "}
-              {type === "remove" ? "remove" : "recolor"}
-            </li>
+            <li>Enter the object you want to {type === "remove" ? "remove" : "recolor"}</li>
           )}
           {type === "recolor" && <li>Specify the replacement color</li>}
           {type === "fill" && <li>Select your desired aspect ratio</li>}

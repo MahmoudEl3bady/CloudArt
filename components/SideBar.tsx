@@ -20,28 +20,23 @@ const SideBar = () => {
   if (!isMounted) return null;
   return (
     <aside className="sidebar">
-      <div className="flex flex-col items-start gap-4 h-full">
+      <div className="flex h-full flex-col items-start gap-4">
         <Link href="/" className="sidebar-logo">
-          <Image
-            src="/assets/icons/cloudArt-logo.svg"
-            alt="logo"
-            width={180}
-            height={28}
-          />
+          <Image src="/assets/icons/cloudArt-logo.svg" alt="logo" width={180} height={28} />
         </Link>
 
-        <nav className="sidebar-nav flex flex-col justify-between w-full">
-          <ul className="sidebar-nav-elements flex flex-col items-start gap-2 w-full">
+        <nav className="sidebar-nav flex w-full flex-col justify-between">
+          <ul className="sidebar-nav-elements flex w-full flex-col items-start gap-2">
             {navLinks.slice(0, 6).map((link) => (
               <li
                 key={link.route}
-                className={`sidebar-nav-item flex gap-4 p-3 font-semibold text-[16px] leading-[140%] w-full rounded-full transition-colors ${
+                className={`sidebar-nav-item flex w-full gap-4 rounded-full p-3 text-[16px] font-semibold leading-[140%] transition-colors ${
                   link.route === pathname
                     ? "bg-purple-gradient text-white"
                     : "text-gray-700 hover:bg-purple-100 hover:shadow-inner"
                 }`}
               >
-                <Link href={link.route} className="flex gap-4 items-center">
+                <Link href={link.route} className="flex items-center gap-4">
                   <Image
                     src={link.icon}
                     alt={link.label}
@@ -55,17 +50,17 @@ const SideBar = () => {
             ))}
           </ul>
 
-          <ul className="sidebar-nav-elements flex flex-col items-start gap-2 w-full">
+          <ul className="sidebar-nav-elements flex w-full flex-col items-start gap-2">
             {navLinks.slice(6).map((link) => (
               <li
                 key={link.route}
-                className={`sidebar-nav-item flex gap-4 p-3 font-semibold text-[16px] leading-[140%] w-full rounded-full transition-colors ${
+                className={`sidebar-nav-item flex w-full gap-4 rounded-full p-3 text-[16px] font-semibold leading-[140%] transition-colors ${
                   link.route === pathname
                     ? "bg-purple-gradient text-white"
                     : "text-gray-700 hover:bg-purple-100 hover:shadow-inner"
                 }`}
               >
-                <Link href={link.route} className="flex gap-4 items-center">
+                <Link href={link.route} className="flex items-center gap-4">
                   <Image
                     src={link.icon}
                     alt={link.label}
@@ -78,7 +73,7 @@ const SideBar = () => {
               </li>
             ))}
 
-            <li className="sidebar-nav-item flex items-center gap-2 p-4 cursor-pointer">
+            <li className="sidebar-nav-item flex cursor-pointer items-center gap-2 p-4">
               <UserButton showName />
             </li>
           </ul>

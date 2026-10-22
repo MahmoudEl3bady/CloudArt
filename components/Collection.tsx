@@ -7,12 +7,7 @@ import { CldImage } from "next-cloudinary";
 import { transformationTypes } from "@/constants";
 import { formUrlQuery } from "@/lib/utils";
 import { Button } from "./ui/button";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationNext,
-  PaginationPrevious,
-} from "./ui/pagination";
+import { Pagination, PaginationContent, PaginationNext, PaginationPrevious } from "./ui/pagination";
 import { Search } from "./Search";
 import { useMemo } from "react";
 
@@ -56,7 +51,7 @@ export const Collection = ({
     if (!query) return initialImages;
 
     const filtered = initialImages.data.filter((image) =>
-      image.title.toLowerCase().includes(query.toLowerCase())
+      image.title.toLowerCase().includes(query.toLowerCase()),
     );
 
     return {
@@ -139,9 +134,7 @@ interface TransformationType {
 
 const Card = ({ image }: CardProps) => {
   const transformationType = image.transformationType;
-  const transformation = transformationTypes[
-    transformationType
-  ] as TransformationType;
+  const transformation = transformationTypes[transformationType] as TransformationType;
 
   if (!transformation || !transformation.icon) {
     console.error(`Invalid transformation type: ${transformationType}`);
@@ -162,9 +155,7 @@ const Card = ({ image }: CardProps) => {
           sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
         />
         <div className="flex-between">
-          <p className="p-20-semibold mr-3 line-clamp-1 text-blue-400">
-            {image.title}
-          </p>
+          <p className="p-20-semibold mr-3 line-clamp-1 text-blue-400">{image.title}</p>
           <Image
             src={`/assets/icons/${transformation.icon}`}
             alt={image.title}

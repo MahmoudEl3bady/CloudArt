@@ -29,21 +29,15 @@ export default async function Home({ searchParams }: any) {
     <main>
       {/* Hero Section */}
       <section className="home">
-        <h1 className="home-heading text-background">
-          Edit your photos with the Power of AI
-        </h1>
-        <ul className="flex items-center justify-center w-full gap-20">
+        <h1 className="home-heading text-background">Edit your photos with the Power of AI</h1>
+        <ul className="flex w-full items-center justify-center gap-20">
           {navLinks.slice(1, 5).map((link) => (
             <Link
               key={link.route}
-              href={
-                clerkUser
-                  ? link.route
-                  : `/transforms/trial/${link.route.split("/").pop()}`
-              }
+              href={clerkUser ? link.route : `/transforms/trial/${link.route.split("/").pop()}`}
               className="flex flex-col items-center justify-center gap-2"
             >
-              <li className="w-fit rounded-full bg-white p-4 hover:scale-110 transition-transform">
+              <li className="w-fit rounded-full bg-white p-4 transition-transform hover:scale-110">
                 <Image
                   src={link.icon}
                   priority={true}
@@ -61,15 +55,15 @@ export default async function Home({ searchParams }: any) {
 
       {/* Guest Trial Section */}
       {!clerkUser && (
-        <section className="mt-12 rounded-2xl bg-gradient-to-r from-blue-50 to-purple-50 p-8 border-2 border-purple-200">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <section className="mt-12 rounded-2xl border-2 border-purple-200 bg-gradient-to-r from-blue-50 to-purple-50 p-8">
+          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              <h2 className="mb-2 text-2xl font-bold text-gray-800">
                 🎨 Try CloudArt Free - No Sign Up Required!
               </h2>
-              <p className="text-gray-600 mb-4">
-                Experience AI-powered image editing instantly. Upload an image
-                and try any transformation.
+              <p className="mb-4 text-gray-600">
+                Experience AI-powered image editing instantly. Upload an image and try any
+                transformation.
               </p>
               <div className="flex gap-3">
                 <Button asChild className="bg-purple-600 hover:bg-purple-700">
@@ -81,13 +75,13 @@ export default async function Home({ searchParams }: any) {
               </div>
             </div>
             <div className="flex gap-2">
-              <div className="bg-white rounded-lg p-3 shadow-md">
+              <div className="rounded-lg bg-white p-3 shadow-md">
                 <p className="text-sm text-gray-600">✓ No credit card</p>
               </div>
-              <div className="bg-white rounded-lg p-3 shadow-md">
+              <div className="rounded-lg bg-white p-3 shadow-md">
                 <p className="text-sm text-gray-600">✓ Instant access</p>
               </div>
-              <div className="bg-white rounded-lg p-3 shadow-md">
+              <div className="rounded-lg bg-white p-3 shadow-md">
                 <p className="text-sm text-gray-600">✓ All features</p>
               </div>
             </div>
@@ -109,39 +103,28 @@ export default async function Home({ searchParams }: any) {
 
       {/* Features Showcase for Guests */}
       {!clerkUser && (
-        <section className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {navLinks.slice(1, 6).map((feature) => (
             <Link
               key={feature.route}
               href={`/transforms/trial/${feature.route.split("/").pop()}`}
-              className="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-purple-400"
+              className="group relative overflow-hidden rounded-2xl border-2 border-transparent bg-white p-6 shadow-lg transition-all hover:border-purple-400 hover:shadow-2xl"
             >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 rounded-full bg-purple-100 group-hover:bg-purple-200 transition-colors">
-                  <Image
-                    src={feature.icon}
-                    alt={feature.label}
-                    width={24}
-                    height={24}
-                  />
+              <div className="mb-4 flex items-center gap-4">
+                <div className="rounded-full bg-purple-100 p-3 transition-colors group-hover:bg-purple-200">
+                  <Image src={feature.icon} alt={feature.label} width={24} height={24} />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {feature.label}
-                </h3>
+                <h3 className="text-lg font-semibold text-gray-800">{feature.label}</h3>
               </div>
-              <p className="text-gray-600 text-sm">
+              <p className="text-sm text-gray-600">
                 {feature.label === "Image Restore" &&
                   "Remove noise and enhance image quality with AI"}
-                {feature.label === "Generative Fill" &&
-                  "Expand your images using AI outpainting"}
-                {feature.label === "Object Remove" &&
-                  "Seamlessly remove unwanted objects"}
-                {feature.label === "Object Recolor" &&
-                  "Change colors of specific objects"}
-                {feature.label === "Background Remove" &&
-                  "Remove backgrounds with precision"}
+                {feature.label === "Generative Fill" && "Expand your images using AI outpainting"}
+                {feature.label === "Object Remove" && "Seamlessly remove unwanted objects"}
+                {feature.label === "Object Recolor" && "Change colors of specific objects"}
+                {feature.label === "Background Remove" && "Remove backgrounds with precision"}
               </p>
-              <div className="mt-4 text-purple-600 font-medium group-hover:translate-x-2 transition-transform inline-flex items-center gap-2">
+              <div className="mt-4 inline-flex items-center gap-2 font-medium text-purple-600 transition-transform group-hover:translate-x-2">
                 Try it now →
               </div>
             </Link>

@@ -22,10 +22,7 @@ const AddTransformationsType = async ({ params }: { params: any }) => {
   const transformation = transformationTypes[type];
   return (
     <>
-      <Header
-        title={transformation?.title}
-        subtitle={transformation?.subTitle}
-      />
+      <Header title={transformation?.title} subtitle={transformation?.subTitle} />
       <TransformsForm
         action="Add"
         type={transformation.type as TransformationTypeKey}

@@ -69,12 +69,7 @@ declare type Transformations = {
   removeBackground?: boolean;
 };
 
-declare type TransformationTypeKey =
-  | "restore"
-  | "fill"
-  | "remove"
-  | "recolor"
-  | "removeBackground"
+declare type TransformationTypeKey = "restore" | "fill" | "remove" | "recolor" | "removeBackground";
 
 // ====== URL QUERY PARAMS
 declare type FormUrlQueryParams = {
@@ -88,10 +83,10 @@ declare type RemoveUrlQueryParams = {
   keysToRemove: string[];
 };
 
-declare type  ImagesResponse = {
+declare type ImagesResponse = {
   data: any[];
   totalPages: number;
-}
+};
 
 declare type TransformationFormProps = {
   action: "Add" | "Update";

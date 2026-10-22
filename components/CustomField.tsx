@@ -2,13 +2,7 @@ import React from "react";
 import { Control } from "react-hook-form";
 import { z } from "zod";
 
-import {
-  FormField,
-  FormItem,
-  FormControl,
-  FormMessage,
-  FormLabel,
-} from "./ui/form";
+import { FormField, FormItem, FormControl, FormMessage, FormLabel } from "./ui/form";
 
 import { formSchema } from "./TransformsForm";
 
@@ -20,13 +14,7 @@ type CustomFieldProps = {
   className?: string;
 };
 
-export const CustomField = ({
-  control,
-  render,
-  name,
-  formLabel,
-  className,
-}: CustomFieldProps) => {
+export const CustomField = ({ control, render, name, formLabel, className }: CustomFieldProps) => {
   return (
     <FormField
       control={control}

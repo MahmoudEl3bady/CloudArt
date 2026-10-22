@@ -15,21 +15,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  aspectRatioOptions,
-  defaultValues,
-  transformationTypes,
-} from "@/constants";
+import { aspectRatioOptions, defaultValues, transformationTypes } from "@/constants";
 import { CustomField } from "./CustomField";
 import { useEffect, useState, useTransition } from "react";
 import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils";
 import { getCldImageUrl } from "next-cloudinary";
 import { useRouter } from "next/navigation";
 import { addImage, updateImage } from "@/lib/actions/image";
-import {
-  DynamicMediaUploader,
-  DynamicTransformedImage,
-} from "@/lib/dynamic-components";
+import { DynamicMediaUploader, DynamicTransformedImage } from "@/lib/dynamic-components";
 
 export const formSchema = z.object({
   title: z.string(),
@@ -48,8 +41,7 @@ const TransformationForm = ({
 }: TransformationFormProps) => {
   const transformationType = transformationTypes[type];
   const [image, setImage] = useState(data);
-  const [newTransformation, setNewTransformation] =
-    useState<Transformations | null>(null);
+  const [newTransformation, setNewTransformation] = useState<Transformations | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformationConfig, setTransformationConfig] = useState(config);
@@ -137,10 +129,7 @@ const TransformationForm = ({
     setIsSubmitting(false);
   }
 
-  const onSelectFieldHandler = (
-    value: string,
-    onChangeField: (value: string) => void
-  ) => {
+  const onSelectFieldHandler = (value: string, onChangeField: (value: string) => void) => {
     const imageSize = aspectRatioOptions[value as AspectRatioKey];
 
     setImage((prevState: any) => ({
@@ -159,7 +148,7 @@ const TransformationForm = ({
     fieldName: string,
     value: string,
     type: string,
-    onChangeField: (value: string) => void
+    onChangeField: (value: string) => void,
   ) => {
     debounce(() => {
       setNewTransformation((prevState: any) => ({
@@ -177,9 +166,7 @@ const TransformationForm = ({
   const onTransformHandler = async () => {
     setIsTransforming(true);
 
-    setTransformationConfig(
-      deepMergeObjects(newTransformation, transformationConfig)
-    );
+    setTransformationConfig(deepMergeObjects(newTransformation, transformationConfig));
 
     setNewTransformation(null);
   };
@@ -208,9 +195,7 @@ const TransformationForm = ({
             className="w-full"
             render={({ field }) => (
               <Select
-                onValueChange={(value) =>
-                  onSelectFieldHandler(value, field.onChange)
-                }
+                onValueChange={(value) => onSelectFieldHandler(value, field.onChange)}
                 value={field.value}
               >
                 <SelectTrigger className="select-field">
@@ -233,21 +218,14 @@ const TransformationForm = ({
             <CustomField
               control={form.control}
               name="prompt"
-              formLabel={
-                type === "remove" ? "Object to remove" : "Object to recolor"
-              }
+              formLabel={type === "remove" ? "Object to remove" : "Object to recolor"}
               className="w-full"
               render={({ field }) => (
                 <Input
                   value={field.value}
                   className="input-field"
                   onChange={(e) =>
-                    onInputChangeHandler(
-                      "prompt",
-                      e.target.value,
-                      type,
-                      field.onChange
-                    )
+                    onInputChangeHandler("prompt", e.target.value, type, field.onChange)
                   }
                 />
               )}
@@ -264,12 +242,7 @@ const TransformationForm = ({
                     value={field.value}
                     className="input-field"
                     onChange={(e) =>
-                      onInputChangeHandler(
-                        "color",
-                        e.target.value,
-                        "recolor",
-                        field.onChange
-                      )
+                      onInputChangeHandler("color", e.target.value, "recolor", field.onChange)
                     }
                   />
                 )}
@@ -313,11 +286,7 @@ const TransformationForm = ({
           >
             {isTransforming ? "Transforming..." : "Apply Transformation"}
           </Button>
-          <Button
-            type="submit"
-            className="submit-button capitalize"
-            disabled={isSubmitting}
-          >
+          <Button type="submit" className="submit-button capitalize" disabled={isSubmitting}>
             {isSubmitting ? "Submitting..." : "Save Image"}
           </Button>
         </div>

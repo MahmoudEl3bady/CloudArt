@@ -13,13 +13,7 @@ type MediaUploaderProps = {
   type: string;
 };
 
-const MediaUploader = ({
-  onValueChange,
-  setImage,
-  image,
-  publicId,
-  type,
-}: MediaUploaderProps) => {
+const MediaUploader = ({ onValueChange, setImage, image, publicId, type }: MediaUploaderProps) => {
   const { toast } = useToast();
 
   const onUploadSuccessHandler = (result: any) => {
@@ -81,12 +75,7 @@ const MediaUploader = ({
           ) : (
             <div className="media-uploader_cta" onClick={() => open()}>
               <div className="media-uploader_cta-image">
-                <Image
-                  src="/assets/icons/add.svg"
-                  alt="Add Image"
-                  width={24}
-                  height={24}
-                />
+                <Image src="/assets/icons/add.svg" alt="Add Image" width={24} height={24} />
               </div>
               <p className="p-14-medium">Click here to upload image</p>
             </div>

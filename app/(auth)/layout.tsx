@@ -8,10 +8,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </SignedOut>
       <SignedIn>
         <UserButton />
-      </SignedIn> 
+      </SignedIn>
       {children}
     </main>
   );
-}
+};
 
-export default Layout
+export default Layout;

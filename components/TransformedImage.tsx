@@ -21,7 +21,7 @@ const TransformedImage = ({
         src: image?.secureURL,
         ...transformationConfig,
       } as any),
-      title
+      title,
     );
   };
   return (
@@ -65,12 +65,7 @@ const TransformedImage = ({
 
           {isTransforming && (
             <div className="">
-              <Image
-                src="/assets/icons/spinner.svg"
-                width={50}
-                height={50}
-                alt="spinner"
-              />
+              <Image src="/assets/icons/spinner.svg" width={50} height={50} alt="spinner" />
               <p className="text-white/80">Please wait...</p>
             </div>
           )}

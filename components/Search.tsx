@@ -7,8 +7,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 
-
-export const Search = ({defaultValue=""}) => {
+export const Search = ({ defaultValue = "" }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(defaultValue);
@@ -38,15 +37,10 @@ export const Search = ({defaultValue=""}) => {
 
   return (
     <div className="flex items-center">
-      <Image
-        src="/assets/icons/search.svg"
-        alt="search"
-        width={24}
-        height={24}
-      />
+      <Image src="/assets/icons/search.svg" alt="search" width={24} height={24} />
 
       <Input
-        className="search-field   "
+        className="search-field"
         placeholder="Search"
         onChange={(e) => setQuery(e.target.value)}
       />

@@ -1,10 +1,5 @@
 "use client";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { navLinks } from "@/constants";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
@@ -18,17 +13,11 @@ const MobileNav = () => {
   return (
     <header className="header">
       <Link href="/" className="pt-10">
-        <Image
-          src="/assets/icons/cloudArt-logo.svg"
-          alt="logo"
-          width={180}
-          height={28}
-          priority
-        />
+        <Image src="/assets/icons/cloudArt-logo.svg" alt="logo" width={180} height={28} priority />
       </Link>
       <nav className="flex gap-2">
         <SignedIn>
-          <UserButton  />
+          <UserButton />
           <Sheet>
             <SheetTrigger aria-label="Open menu">
               <Image
@@ -57,12 +46,9 @@ const MobileNav = () => {
                     return (
                       <li key={link.route}>
                         <Link
-                          className={`flex items-center gap-4 p-3 font-semibold text-[16px] leading-[140%] transition-colors
-                            ${
-                              isActive
-                                ? "text-blue-400"
-                                : "text-slate-400 hover:text-purple-600"
-                            }`}
+                          className={`flex items-center gap-4 p-3 text-[16px] font-semibold leading-[140%] transition-colors ${
+                            isActive ? "text-blue-400" : "text-slate-400 hover:text-purple-600"
+                          }`}
                           href={link.route}
                         >
                           <Image

@@ -15,12 +15,12 @@ const TrialTransformationsType = async ({ params }: { params: any }) => {
   const transformation = transformationTypes[type];
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="mx-auto max-w-7xl">
       {/* Trial Mode Banner */}
       <div className="mb-6 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-lg">🎨 Trial Mode</h3>
+            <h3 className="text-lg font-semibold">🎨 Trial Mode</h3>
             <p className="text-sm text-blue-100">
               You're trying CloudArt for free! Sign up to save your edits.
             </p>
@@ -35,22 +35,14 @@ const TrialTransformationsType = async ({ params }: { params: any }) => {
         </div>
       </div>
 
-      <Header
-        title={transformation?.title}
-        subtitle={transformation?.subTitle}
-      />
+      <Header title={transformation?.title} subtitle={transformation?.subTitle} />
 
-      <TrialTransformForm
-        action="Trial"
-        type={transformation.type as TransformationTypeKey}
-      />
+      <TrialTransformForm action="Trial" type={transformation.type as TransformationTypeKey} />
 
       {/* Feature Limitations Notice */}
-      <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <h4 className="font-semibold text-yellow-800 mb-2">
-          Trial Limitations:
-        </h4>
-        <ul className="text-sm text-yellow-700 space-y-1">
+      <div className="mt-8 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+        <h4 className="mb-2 font-semibold text-yellow-800">Trial Limitations:</h4>
+        <ul className="space-y-1 text-sm text-yellow-700">
           <li>• Images are not saved permanently</li>
           <li>• Download quality limited to standard resolution</li>
           <li>• Sign up to unlock unlimited transformations and storage</li>
