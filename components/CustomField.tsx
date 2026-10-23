@@ -1,32 +1,20 @@
 import React from "react";
-import { Control } from "react-hook-form";
-import { z } from "zod";
+import type { Control, ControllerRenderProps } from "react-hook-form";
+import type { z } from "zod";
 
-import {
-  FormField,
-  FormItem,
-  FormControl,
-  FormMessage,
-  FormLabel,
-} from "./ui/form";
+import { FormField, FormItem, FormControl, FormMessage, FormLabel } from "./ui/form";
 
-import { formSchema } from "./TransformsForm";
+import type { formSchema } from "./TransformsForm";
 
 type CustomFieldProps = {
   control: Control<z.infer<typeof formSchema>> | undefined;
-  render: (props: { field: any }) => React.ReactNode;
+  render: (props: { field: ControllerRenderProps<z.infer<typeof formSchema>> }) => React.ReactNode;
   name: keyof z.infer<typeof formSchema>;
   formLabel?: string;
   className?: string;
 };
 
-export const CustomField = ({
-  control,
-  render,
-  name,
-  formLabel,
-  className,
-}: CustomFieldProps) => {
+export const CustomField = ({ control, render, name, formLabel, className }: CustomFieldProps) => {
   return (
     <FormField
       control={control}

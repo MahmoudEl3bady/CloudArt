@@ -9,7 +9,7 @@ const serverEnvSchema = z.object({
     .min(1, "required")
     .refine(
       (v) => v.startsWith("mongodb://") || v.startsWith("mongodb+srv://"),
-      "must start with mongodb:// or mongodb+srv://"
+      "must start with mongodb:// or mongodb+srv://",
     ),
   MONGODB_DB_NAME: z.string().min(1).default("imageEditor"),
   CLOUDINARY_API_KEY: z.string().min(1, "required"),
@@ -32,7 +32,7 @@ function parseServerEnv() {
       .map((issue) => `  - ${issue.path.join(".")}: ${issue.message}`)
       .join("\n");
     throw new Error(
-      `Invalid server environment variables:\n${details}\nFix your .env / .env.local (see .env.example).`
+      `Invalid server environment variables:\n${details}\nFix your .env / .env.local (see .env.example).`,
     );
   }
   return parsed.data;

@@ -7,32 +7,16 @@ import { CldImage } from "next-cloudinary";
 import { transformationTypes } from "@/constants";
 import { formUrlQuery } from "@/lib/utils";
 import { Button } from "./ui/button";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationNext,
-  PaginationPrevious,
-} from "./ui/pagination";
+import { Pagination, PaginationContent, PaginationNext, PaginationPrevious } from "./ui/pagination";
 import { Search } from "./Search";
 import { useMemo } from "react";
-
-type TransformationTypeKey = keyof typeof transformationTypes;
-
-export interface ImageType {
-  _id: string;
-  title: string;
-  transformationType: TransformationTypeKey;
-  secureURL: string;
-  width: number;
-  height: number;
-  config: Record<string, any>;
-}
+import type { IImage } from "@/types";
 
 export interface CollectionProps {
   hasSearch?: boolean;
   images:
     | {
-        data: ImageType[];
+        data: IImage[];
         totalPages?: number;
       }
     | undefined;
@@ -56,7 +40,7 @@ export const Collection = ({
     if (!query) return initialImages;
 
     const filtered = initialImages.data.filter((image) =>
-      image.title.toLowerCase().includes(query.toLowerCase())
+      image.title.toLowerCase().includes(query.toLowerCase()),
     );
 
     return {
@@ -127,21 +111,19 @@ export const Collection = ({
 };
 
 interface CardProps {
-  image: ImageType;
+  image: IImage;
 }
 interface TransformationType {
   type: string;
   title: string;
   subTitle: string;
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   icon: string;
 }
 
 const Card = ({ image }: CardProps) => {
   const transformationType = image.transformationType;
-  const transformation = transformationTypes[
-    transformationType
-  ] as TransformationType;
+  const transformation = transformationTypes[transformationType] as TransformationType;
 
   if (!transformation || !transformation.icon) {
     console.error(`Invalid transformation type: ${transformationType}`);
@@ -162,9 +144,7 @@ const Card = ({ image }: CardProps) => {
           sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
         />
         <div className="flex-between">
-          <p className="p-20-semibold mr-3 line-clamp-1 text-blue-400">
-            {image.title}
-          </p>
+          <p className="p-20-semibold mr-3 line-clamp-1 text-blue-400">{image.title}</p>
           <Image
             src={`/assets/icons/${transformation.icon}`}
             alt={image.title}

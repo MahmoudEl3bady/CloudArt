@@ -1,16 +1,27 @@
-import mongoose, { model, Schema, Model } from "mongoose";
+import type { Model } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
+
+export interface UserDoc extends mongoose.Document {
+  clerkId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  username?: string;
+  password?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 const userSchema = new Schema({
   clerkId: { type: String, required: true, unique: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  username: { type: String},
+  username: { type: String },
   password: { type: String },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
 
 // Check if the model already exists before compiling it
-export const User: Model<any> =
-  mongoose.models.User || model("User", userSchema);
+export const User: Model<UserDoc> = mongoose.models.User || model<UserDoc>("User", userSchema);

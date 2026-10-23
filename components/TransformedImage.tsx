@@ -1,8 +1,9 @@
 "use client";
 import { dataUrl, debounce, download, getImageSize } from "@/lib/utils";
 import { CldImage, getCldImageUrl } from "next-cloudinary";
-import { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
+import type { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
 import Image from "next/image";
+import type { TransformedImageProps } from "@/types";
 
 const TransformedImage = ({
   image,
@@ -18,10 +19,10 @@ const TransformedImage = ({
       getCldImageUrl({
         width: image?.width,
         height: image?.height,
-        src: image?.secureURL,
+        src: image?.secureURL ?? "",
         ...transformationConfig,
-      } as any),
-      title
+      }),
+      title,
     );
   };
   return (
@@ -65,12 +66,7 @@ const TransformedImage = ({
 
           {isTransforming && (
             <div className="">
-              <Image
-                src="/assets/icons/spinner.svg"
-                width={50}
-                height={50}
-                alt="spinner"
-              />
+              <Image src="/assets/icons/spinner.svg" width={50} height={50} alt="spinner" />
               <p className="text-white/80">Please wait...</p>
             </div>
           )}

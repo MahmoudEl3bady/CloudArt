@@ -1,4 +1,5 @@
-import mongoose, { Document, Schema, model ,Model} from "mongoose";
+import type { Document, Model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 export interface ImageDoc extends Document {
   title: string;
@@ -32,6 +33,5 @@ const ImageSchema = new Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-
-export const Image: Model<any> =
-  mongoose.models.Image || model("Image", ImageSchema);
+export const Image: Model<ImageDoc> =
+  mongoose.models.Image || model<ImageDoc>("Image", ImageSchema);

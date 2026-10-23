@@ -19,12 +19,10 @@ const clientEnvSchema = z.object({
 // NEXT_PUBLIC_* must be written as literal process.env references so the
 // Next.js bundler can inline them into client code at build time.
 const rawClientEnv = {
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
-    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
   NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL,
   NEXT_PUBLIC_CLERK_SIGN_UP_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
-  NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
-    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
 };
 
 function parseClientEnv() {
@@ -34,7 +32,7 @@ function parseClientEnv() {
       .map((issue) => `  - ${issue.path.join(".")}: ${issue.message}`)
       .join("\n");
     throw new Error(
-      `Invalid client environment variables:\n${details}\nFix your .env / .env.local (see .env.example).`
+      `Invalid client environment variables:\n${details}\nFix your .env / .env.local (see .env.example).`,
     );
   }
   return parsed.data;

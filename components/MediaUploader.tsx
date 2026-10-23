@@ -2,36 +2,36 @@
 import { useToast } from "@/hooks/use-toast";
 import { dataUrl, getImageSize } from "@/lib/utils";
 import { CldImage, CldUploadWidget } from "next-cloudinary";
-import { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
+import type { CloudinaryUploadWidgetResults } from "next-cloudinary";
+import type { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
 import Image from "next/image";
+import type { IImage } from "@/types";
 
 type MediaUploaderProps = {
   onValueChange: (value: string) => void;
-  setImage: React.Dispatch<any>;
-  publicId: string;
-  image: any;
+  setImage: React.Dispatch<React.SetStateAction<Partial<IImage> | null>>;
+  publicId?: string;
+  image: Partial<IImage> | null;
   type: string;
 };
 
-const MediaUploader = ({
-  onValueChange,
-  setImage,
-  image,
-  publicId,
-  type,
-}: MediaUploaderProps) => {
+const MediaUploader = ({ onValueChange, setImage, image, publicId, type }: MediaUploaderProps) => {
   const { toast } = useToast();
 
-  const onUploadSuccessHandler = (result: any) => {
-    setImage((prevState: any) => ({
+  const onUploadSuccessHandler = (result: CloudinaryUploadWidgetResults) => {
+    // info is string | CloudinaryUploadWidgetInfo; only the object shape
+    // carries the fields we read.
+    const info = typeof result.info === "object" ? result.info : undefined;
+
+    setImage((prevState) => ({
       ...prevState,
-      publicId: result?.info?.public_id,
-      width: result?.info?.width,
-      height: result?.info?.height,
-      secureURL: result?.info?.secure_url,
+      publicId: info?.public_id,
+      width: info?.width,
+      height: info?.height,
+      secureURL: info?.secure_url,
     }));
 
-    onValueChange(result?.info?.public_id);
+    onValueChange(info?.public_id ?? "");
 
     toast({
       title: "Image uploaded successfully",
@@ -81,12 +81,7 @@ const MediaUploader = ({
           ) : (
             <div className="media-uploader_cta" onClick={() => open()}>
               <div className="media-uploader_cta-image">
-                <Image
-                  src="/assets/icons/add.svg"
-                  alt="Add Image"
-                  width={24}
-                  height={24}
-                />
+                <Image src="/assets/icons/add.svg" alt="Add Image" width={24} height={24} />
               </div>
               <p className="p-14-medium">Click here to upload image</p>
             </div>

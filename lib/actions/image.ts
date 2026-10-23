@@ -5,29 +5,11 @@ import { User } from "@/db/models/user.model";
 import { getUserById } from "./user";
 import { Image } from "@/db/models/image.model";
 import { redirect } from "next/navigation";
-import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
-import { serverEnv } from "@/lib/env.server";
-import { clientEnv } from "@/lib/env.client";
+import type { AddImageParams, UpdateImageParams } from "@/types";
+import type { Query } from "mongoose";
 
-interface GetAllImagesParams {
-  limit?: number;
-  page?: number;
-  searchQuery?: string;
-}
-
-interface UpdateImageParams {
-  path: string;
-  image: any; // Replace with your image type
-  userId: string;
-}
-
-interface ImageResponse {
-  data: any[]; // Replace 'any' with your Image type
-  totalPages: number;
-}
-
-const populateUser = async (query: any) => {
+const populateUser = async <T extends Query<unknown, unknown>>(query: T) => {
   return query.populate({
     path: "author",
     model: User,
@@ -51,7 +33,7 @@ export async function deleteImage(imageId: string) {
   }
 }
 
-export async function updateImage({ path, image, userId }: UpdateImageParams) {
+export async function updateImage({ path, image, userId: _userId }: UpdateImageParams) {
   try {
     await connectToDatabase();
     const updatedImage = await Image.findOneAndUpdate(
@@ -104,20 +86,6 @@ export async function getImageById(imageId: string) {
 export async function getAllImages() {
   try {
     await connectToDatabase();
-
-    // Configure cloudinary
-    cloudinary.config({
-      cloud_name: clientEnv.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-      api_key: serverEnv.CLOUDINARY_API_KEY,
-      api_secret: serverEnv.CLOUDINARY_API_SECRET,
-      secure: true,
-    });
-
-    let expression = "folder=image-transformer";
-    const { resources } = await cloudinary.search
-      .expression(expression)
-      .execute();
-    const resourcesIds = resources.map((res: any) => res.public_id);
 
     const images = await populateUser(Image.find());
 
