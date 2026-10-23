@@ -1,10 +1,10 @@
 import React from "react";
-import { Control, ControllerRenderProps } from "react-hook-form";
-import { z } from "zod";
+import type { Control, ControllerRenderProps } from "react-hook-form";
+import type { z } from "zod";
 
 import { FormField, FormItem, FormControl, FormMessage, FormLabel } from "./ui/form";
 
-import { formSchema } from "./TransformsForm";
+import type { formSchema } from "./TransformsForm";
 
 type CustomFieldProps = {
   control: Control<z.infer<typeof formSchema>> | undefined;

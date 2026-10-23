@@ -3,7 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { dataUrl, getImageSize } from "@/lib/utils";
 import { CldImage, CldUploadWidget } from "next-cloudinary";
 import type { CloudinaryUploadWidgetResults } from "next-cloudinary";
-import { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
+import type { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
 import Image from "next/image";
 import type { IImage } from "@/types";
 

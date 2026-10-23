@@ -1,4 +1,5 @@
-import mongoose, { model, Schema, Model } from "mongoose";
+import type { Model } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 
 export interface UserDoc extends mongoose.Document {
   clerkId: string;

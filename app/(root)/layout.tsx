@@ -1,7 +1,7 @@
 import MobileNav from "@/components/MobileNav";
 import SideBar from "@/components/SideBar";
 import { Toaster } from "@/components/ui/toaster";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
   return (

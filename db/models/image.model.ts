@@ -1,4 +1,5 @@
-import mongoose, { Document, Schema, model, Model } from "mongoose";
+import type { Document, Model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 export interface ImageDoc extends Document {
   title: string;

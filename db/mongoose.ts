@@ -1,4 +1,5 @@
-import mongoose, { Mongoose } from "mongoose";
+import type { Mongoose } from "mongoose";
+import mongoose from "mongoose";
 import { serverEnv } from "@/lib/env.server";
 
 interface MongooseConnection {
