@@ -4,12 +4,14 @@ import type { z } from "zod";
 
 import { FormField, FormItem, FormControl, FormMessage, FormLabel } from "./ui/form";
 
-import type { formSchema } from "./TransformsForm";
+import type { imageFormSchema } from "@/lib/validation/image";
 
 type CustomFieldProps = {
-  control: Control<z.infer<typeof formSchema>> | undefined;
-  render: (props: { field: ControllerRenderProps<z.infer<typeof formSchema>> }) => React.ReactNode;
-  name: keyof z.infer<typeof formSchema>;
+  control: Control<z.infer<typeof imageFormSchema>> | undefined;
+  render: (props: {
+    field: ControllerRenderProps<z.infer<typeof imageFormSchema>>;
+  }) => React.ReactNode;
+  name: keyof z.infer<typeof imageFormSchema>;
   formLabel?: string;
   className?: string;
 };

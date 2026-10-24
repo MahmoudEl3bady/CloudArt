@@ -112,7 +112,7 @@ export const aspectRatioOptions = {
 };
 export const defaultValues = {
   title: "",
-  aspectRatio: "",
+  aspectRatio: undefined,
   color: "",
   prompt: "",
   publicId: "",

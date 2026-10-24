@@ -1,8 +1,7 @@
 import { Collection } from "@/components/Collection";
 import { navLinks } from "@/constants";
-import { getExampleImages, getUserImages } from "@/lib/actions/image";
-import { getUserById } from "@/lib/actions/user";
-import { currentUser } from "@clerk/nextjs/server";
+import { getExampleImages, getUserImages } from "@/lib/data/images";
+import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -12,24 +11,20 @@ type HomeProps = {
   searchParams: Promise<{ page?: string }>;
 };
 
+const emptyImages: ImagesResponse = { data: [], totalPages: 0 };
+
 export default async function Home({ searchParams }: HomeProps) {
   const { page: sPage } = await searchParams;
   const page = Number(sPage) || 1;
-  const clerkUser = await currentUser();
-  let images: ImagesResponse | undefined;
-  let user;
+  const { userId } = await auth();
 
-  if (clerkUser) {
-    user = await getUserById(clerkUser?.id as string);
-    images = (await getUserImages({
-      userId: user._id as string,
-      page,
-      limit: 6,
-    })) as ImagesResponse;
+  let images: ImagesResponse;
+  if (userId) {
+    const result = await getUserImages({ page, limit: 6 });
+    images = result.ok ? result.data : emptyImages;
   } else {
-    // TODO(P3): getExampleImages returns { data, totalImages } with no
-    // totalPages; unify the return shape instead of casting.
-    images = (await getExampleImages()) as unknown as ImagesResponse;
+    const result = await getExampleImages();
+    images = result.ok ? result.data : emptyImages;
   }
 
   return (
@@ -41,7 +36,7 @@ export default async function Home({ searchParams }: HomeProps) {
           {navLinks.slice(1, 5).map((link) => (
             <Link
               key={link.route}
-              href={clerkUser ? link.route : `/transforms/trial/${link.route.split("/").pop()}`}
+              href={userId ? link.route : `/transforms/trial/${link.route.split("/").pop()}`}
               className="flex flex-col items-center justify-center gap-2"
             >
               <li className="w-fit rounded-full bg-white p-4 transition-transform hover:scale-110">
@@ -61,7 +56,7 @@ export default async function Home({ searchParams }: HomeProps) {
       </section>
 
       {/* Guest Trial Section */}
-      {!clerkUser && (
+      {!userId && (
         <section className="mt-12 rounded-2xl border-2 border-purple-200 bg-gradient-to-r from-blue-50 to-purple-50 p-8">
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
             <div className="flex-1">
@@ -109,7 +104,7 @@ export default async function Home({ searchParams }: HomeProps) {
       )}
 
       {/* Features Showcase for Guests */}
-      {!clerkUser && (
+      {!userId && (
         <section className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {navLinks.slice(1, 6).map((feature) => (
             <Link

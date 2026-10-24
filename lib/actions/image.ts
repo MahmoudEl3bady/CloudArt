@@ -1,144 +1,107 @@
 "use server";
-import { connectToDatabase } from "@/db/mongoose";
-import { revalidatePath } from "next/cache";
-import { User } from "@/db/models/user.model";
-import { getUserById } from "./user";
-import { Image } from "@/db/models/image.model";
-import { redirect } from "next/navigation";
+
+import { auth } from "@clerk/nextjs/server";
 import mongoose from "mongoose";
-import type { AddImageParams, UpdateImageParams } from "@/types";
-import type { Query } from "mongoose";
+import { revalidatePath } from "next/cache";
+import { deleteImageOwnedBy, insertImage, updateImageOwnedBy } from "@/lib/data/images";
+import { getOrCreateUserByClerkId } from "@/lib/data/users";
+import { saveImageSchema, updateImageSchema } from "@/lib/validation/image";
+import type { ActionResult, AddImageParams, UpdateImageParams } from "@/types";
 
-const populateUser = async <T extends Query<unknown, unknown>>(query: T) => {
-  return query.populate({
-    path: "author",
-    model: User,
-    select: "firstName lastName _id",
-  });
+const revalidateImagePaths = (detailPath?: string) => {
+  revalidatePath("/");
+  revalidatePath("/profile");
+  if (detailPath) {
+    revalidatePath(detailPath);
+  }
 };
 
-export async function deleteImage(imageId: string) {
-  try {
-    await connectToDatabase();
-    const deletedImage = await Image.findOneAndDelete({ _id: imageId });
-    if (!deletedImage) {
-      throw new Error("Image not found");
-    }
-    return deletedImage;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  } finally {
-    redirect("/");
+export async function addImage({ image }: AddImageParams): Promise<ActionResult<{ _id: string }>> {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) {
+    return { ok: false, error: "UNAUTHENTICATED" };
   }
-}
 
-export async function updateImage({ path, image, userId: _userId }: UpdateImageParams) {
-  try {
-    await connectToDatabase();
-    const updatedImage = await Image.findOneAndUpdate(
-      { _id: image._id },
-      { ...image },
-      { new: true },
-    );
-    if (!updatedImage) {
-      throw new Error("Image not found");
-    }
-    revalidatePath(path);
-    return JSON.parse(JSON.stringify(updateImage));
-  } catch (error) {
-    console.error(error);
-    throw error;
+  const parsed = saveImageSchema.safeParse(image);
+  if (!parsed.success) {
+    return { ok: false, error: "INVALID_INPUT" };
   }
-}
 
-export async function addImage({ image, userId, path }: AddImageParams) {
   try {
-    await connectToDatabase();
-    const author = await getUserById(userId);
+    const author = await getOrCreateUserByClerkId(clerkId);
     if (!author) {
-      throw new Error("User not found");
+      return { ok: false, error: "UNAUTHENTICATED" };
     }
-    const createdImage = await Image.create({ ...image, author: author._id });
-    revalidatePath(path);
-    return JSON.parse(JSON.stringify(createdImage));
+
+    const created = await insertImage({ authorId: author._id, data: parsed.data });
+    revalidateImagePaths();
+    return { ok: true, data: created };
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error("addImage failed:", error);
+    return { ok: false, error: "SERVER_ERROR" };
   }
 }
 
-export async function getImageById(imageId: string) {
+export async function updateImage({
+  image,
+}: UpdateImageParams): Promise<ActionResult<{ _id: string }>> {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) {
+    return { ok: false, error: "UNAUTHENTICATED" };
+  }
+
+  const parsed = updateImageSchema.safeParse(image);
+  if (!parsed.success) {
+    return { ok: false, error: "INVALID_INPUT" };
+  }
+  if (!mongoose.isValidObjectId(parsed.data._id)) {
+    return { ok: false, error: "NOT_FOUND" };
+  }
+
   try {
-    await connectToDatabase();
-    const query = Image.findById(imageId);
-    const image = await populateUser(query);
-    if (!image) {
-      throw new Error("Image not found");
+    const author = await getOrCreateUserByClerkId(clerkId);
+    if (!author) {
+      return { ok: false, error: "UNAUTHENTICATED" };
     }
-    return JSON.parse(JSON.stringify(image));
+
+    const { _id, ...fields } = parsed.data;
+    const updated = await updateImageOwnedBy(author._id, _id, fields);
+    if (!updated) {
+      return { ok: false, error: "NOT_FOUND" };
+    }
+
+    revalidateImagePaths(`/transforms/${_id}`);
+    return { ok: true, data: updated };
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error("updateImage failed:", error);
+    return { ok: false, error: "SERVER_ERROR" };
   }
 }
 
-export async function getAllImages() {
+export async function deleteImage(imageId: string): Promise<ActionResult<{ _id: string }>> {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) {
+    return { ok: false, error: "UNAUTHENTICATED" };
+  }
+  if (!mongoose.isValidObjectId(imageId)) {
+    return { ok: false, error: "NOT_FOUND" };
+  }
+
   try {
-    await connectToDatabase();
+    const author = await getOrCreateUserByClerkId(clerkId);
+    if (!author) {
+      return { ok: false, error: "UNAUTHENTICATED" };
+    }
 
-    const images = await populateUser(Image.find());
+    const deleted = await deleteImageOwnedBy(author._id, imageId);
+    if (!deleted) {
+      return { ok: false, error: "NOT_FOUND" };
+    }
 
-    return JSON.parse(JSON.stringify(images));
-  } catch (e) {
-    console.error(e);
+    revalidateImagePaths(`/transforms/${imageId}`);
+    return { ok: true, data: { _id: imageId } };
+  } catch (error) {
+    console.error("deleteImage failed:", error);
+    return { ok: false, error: "SERVER_ERROR" };
   }
 }
-
-export const getUserImages = async ({
-  userId,
-  limit = 9,
-  page = 1,
-}: {
-  userId: string;
-  limit?: number;
-  page: number;
-}) => {
-  try {
-    await connectToDatabase();
-    const skipAmount = (Number(page) - 1) * limit;
-
-    const userImages = await Image.find({
-      author: new mongoose.Types.ObjectId(userId),
-    })
-      .sort({ updatedAt: -1 })
-      .skip(skipAmount)
-      .limit(limit);
-
-    const totalImages = await Image.find({ author: userId }).countDocuments();
-
-    return {
-      data: JSON.parse(JSON.stringify(userImages)),
-      totalPages: Math.ceil(totalImages / limit),
-    };
-  } catch (error) {
-    console.error("Failed to retrieve user's recent images:", error);
-    return [];
-  }
-};
-
-export const getExampleImages = async () => {
-  try {
-    await connectToDatabase();
-    const data = await Image.find({
-      example: true,
-    });
-    return {
-      data: JSON.parse(JSON.stringify(data)),
-      totalImages: 5,
-    };
-  } catch (error) {
-    console.error("Failed to retrieve user's recent images:", error);
-    return [];
-  }
-};

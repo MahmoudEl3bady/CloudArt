@@ -1,15 +1,19 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// Define routes that should be protected
-const isProtectedRoute = createRouteMatcher([
-  "/profile(.*)",
-  "/transforms/add(.*)",
-  "/transforms/[id]/update(.*)",
+// Protect-by-default: only these routes are reachable without a session.
+// Everything else calls auth.protect(). Authorization (ownership) is still
+// enforced inside actions and pages on top of this (defense in depth).
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/transforms/trial(.*)",
+  "/api/webhooks(.*)",
+  "/api/health",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  // Protect specific routes
-  if (isProtectedRoute(req)) {
+  if (!isPublicRoute(req)) {
     await auth.protect();
   }
 });

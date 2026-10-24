@@ -3,10 +3,15 @@ import React from "react";
 import { transformationTypes } from "@/constants";
 import TransformsForm from "@/components/TransformsForm";
 import { auth } from "@clerk/nextjs/server";
-import { getUserById } from "@/lib/actions/user";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 type TransformationTypeKey = keyof typeof transformationTypes;
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return Object.keys(transformationTypes).map((type) => ({ type }));
+}
 
 type PageProps = {
   params: Promise<{ type: string }>;
@@ -18,17 +23,15 @@ const AddTransformationsType = async ({ params }: PageProps) => {
   if (!userId) {
     redirect("/sign-in");
   }
-  const user = await getUserById(userId);
   // The route segment is user-controlled; narrow the string to a known key.
   const transformation = transformationTypes[type as TransformationTypeKey];
+  if (!transformation) {
+    notFound();
+  }
   return (
     <>
-      <Header title={transformation?.title} subtitle={transformation?.subTitle} />
-      <TransformsForm
-        action="Add"
-        type={transformation.type as TransformationTypeKey}
-        userId={user.clerkId}
-      />
+      <Header title={transformation.title} subtitle={transformation.subTitle} />
+      <TransformsForm action="Add" type={transformation.type as TransformationTypeKey} />
     </>
   );
 };

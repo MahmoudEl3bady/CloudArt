@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 
 import {
   Select,
@@ -17,27 +17,23 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { aspectRatioOptions, defaultValues, transformationTypes } from "@/constants";
 import { CustomField } from "./CustomField";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import type { AspectRatioKey } from "@/lib/utils";
 import { debounce, deepMergeObjects } from "@/lib/utils";
-import { getCldImageUrl } from "next-cloudinary";
 import { useRouter } from "next/navigation";
 import { addImage, updateImage } from "@/lib/actions/image";
+import { useToast } from "@/hooks/use-toast";
+import { errorLabels } from "@/lib/action-errors";
+import { imageFormSchema, normalizeColorForConfig } from "@/lib/validation/image";
 import { DynamicMediaUploader, DynamicTransformedImage } from "@/lib/dynamic-components";
-import type { IImage, TransformationFormProps, Transformations } from "@/types";
+import type { IImage, SaveImageFields, TransformationFormProps, Transformations } from "@/types";
 
-export const formSchema = z.object({
-  title: z.string(),
-  aspectRatio: z.string().optional(),
-  color: z.string().optional(),
-  prompt: z.string().optional(),
-  publicId: z.string(),
-});
+const isAspectRatioKey = (value?: string): value is AspectRatioKey =>
+  !!value && value in aspectRatioOptions;
 
 const TransformationForm = ({
   action,
   data = null,
-  userId,
   type,
   config = null,
 }: TransformationFormProps) => {
@@ -47,84 +43,66 @@ const TransformationForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformationConfig, setTransformationConfig] = useState(config);
-  const [, startTransition] = useTransition();
   const router = useRouter();
+  const { toast } = useToast();
 
   const initialValues =
     data && action === "Update"
       ? {
-          title: data?.title,
-          aspectRatio: data?.aspectRatio,
-          color: data?.color,
-          prompt: data?.prompt,
-          publicId: data?.publicId,
+          title: data.title,
+          aspectRatio: isAspectRatioKey(data.aspectRatio) ? data.aspectRatio : undefined,
+          color: data.color,
+          prompt: data.prompt,
+          publicId: data.publicId,
         }
       : defaultValues;
 
   // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof imageFormSchema>>({
+    resolver: zodResolver(imageFormSchema),
     defaultValues: initialValues,
   });
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof imageFormSchema>) {
     setIsSubmitting(true);
 
     if (data || image) {
-      const transformationUrl = getCldImageUrl({
-        width: image?.width,
-        height: image?.height,
-        src: image?.publicId ?? "",
-        ...transformationConfig,
-      });
-
-      const imageData = {
+      const imageData: SaveImageFields = {
         title: values.title,
-        publicId: image?.publicId,
+        publicId: image?.publicId ?? "",
         transformationType: type,
         width: image?.width,
         height: image?.height,
-        config: transformationConfig,
-        secureURL: image?.secureURL,
-        transformationURL: transformationUrl,
+        secureURL: image?.secureURL ?? "",
         aspectRatio: values.aspectRatio,
         prompt: values.prompt,
         color: values.color,
       };
-      startTransition(() => {});
+
       if (action === "Add") {
-        try {
-          const newImage = await addImage({
-            image: imageData,
-            userId,
-            path: "/",
+        const result = await addImage({ image: imageData });
+        if (result.ok) {
+          form.reset();
+          setImage(data ?? null);
+          router.push(`/transforms/${result.data._id}`);
+        } else {
+          toast({
+            title: errorLabels[result.error],
+            variant: "destructive",
           });
-          if (newImage) {
-            form.reset();
-            setImage(data ?? null);
-            router.push(`/transforms/${newImage._id}`);
-          }
-        } catch (error) {
-          console.log(error);
         }
       }
 
       if (action === "Update" && data) {
-        try {
-          const updatedImage = await updateImage({
-            image: {
-              ...imageData,
-              _id: data._id,
-            },
-            userId,
-            path: `/transforms/${data._id}`,
+        const result = await updateImage({ image: { ...imageData, _id: data._id } });
+        if (result.ok) {
+          router.push(`/transforms/${result.data._id}`);
+        } else {
+          toast({
+            title: errorLabels[result.error],
+            variant: "destructive",
           });
-          if (updatedImage) {
-            router.push(`/transforms/${updatedImage._id}`);
-          }
-        } catch (error) {
-          console.log(error);
         }
       }
     }
@@ -155,6 +133,8 @@ const TransformationForm = ({
     debounce(() => {
       // `type` is a dynamic transformation key ("remove"/"recolor" at the
       // call sites); TS cannot check the computed key against Transformations.
+      const isPrompt = fieldName === "prompt";
+      const configValue = isPrompt ? value : normalizeColorForConfig(value);
       setNewTransformation((prevState) => {
         const prevConfig = (prevState?.[type as keyof Transformations] ?? {}) as Record<
           string,
@@ -164,7 +144,7 @@ const TransformationForm = ({
           ...prevState,
           [type]: {
             ...prevConfig,
-            [fieldName === "prompt" ? "prompt" : "to"]: value,
+            [isPrompt ? "prompt" : "to"]: configValue,
           },
         } as Transformations;
       });

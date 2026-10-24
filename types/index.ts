@@ -17,49 +17,49 @@ export type UpdateUserParams = {
   photo: string;
 };
 
+// Server-side user shape returned by lib/data. Deliberately excludes email
+// and any other private field (S-07).
+export type UserDTO = {
+  _id: string;
+  clerkId: string;
+  firstName: string;
+  lastName: string;
+  username?: string;
+};
+
+// ====== ACTION / DATA RESULTS
+export type ActionError =
+  "UNAUTHENTICATED" | "INVALID_INPUT" | "NOT_FOUND" | "RATE_LIMITED" | "SERVER_ERROR";
+
+export type ActionResult<T> = { ok: true; data: T } | { ok: false; error: ActionError };
+
 // ====== IMAGE PARAMS
 // Field optionality mirrors what the transformation forms can actually
 // produce (values come from image?.x before an upload/transform happens)
-// and the Mongoose schema in db/models/image.model.ts.
+// Client-submitted image fields. config and transformationURL are never
+// accepted from the client (S-10): the server rebuilds both.
+export type SaveImageFields = {
+  title: string;
+  publicId: string;
+  transformationType: TransformationTypeKey;
+  secureURL: string;
+  width?: number;
+  height?: number;
+  aspectRatio?: string;
+  prompt?: string;
+  color?: string;
+};
+
 export type AddImageParams = {
-  image: {
-    title: string;
-    publicId?: string;
-    transformationType: string;
-    width?: number;
-    height?: number;
-    config: Transformations | null;
-    secureURL?: string;
-    transformationURL?: string;
-    aspectRatio: string | undefined;
-    prompt: string | undefined;
-    color: string | undefined;
-  };
-  userId: string;
-  path: string;
+  image: SaveImageFields;
 };
 
 export type UpdateImageParams = {
-  image: {
-    _id: string;
-    title: string;
-    publicId?: string;
-    transformationType: string;
-    width?: number;
-    height?: number;
-    config: Transformations | null;
-    secureURL?: string;
-    transformationURL?: string;
-    aspectRatio: string | undefined;
-    prompt: string | undefined;
-    color: string | undefined;
-  };
-  userId: string;
-  path: string;
+  image: SaveImageFields & { _id: string };
 };
 
-// Shape of an image document after JSON.parse(JSON.stringify(...)) and
-// author populate (see db/models/image.model.ts and lib/actions/image.ts).
+// Shape of an image document as served to pages/components: the lean doc
+// mapped by toImageDTO in lib/data/images.ts (see db/models/image.model.ts).
 export type IImage = {
   _id: string;
   title: string;
@@ -73,14 +73,6 @@ export type IImage = {
   transformationURL?: string;
   color?: string;
   prompt?: string;
-  author: {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    // P4: populateUser does not select clerkId today, so this is
-    // undefined at runtime until the select is fixed.
-    clerkId?: string;
-  };
   createdAt?: string;
   updatedAt?: string;
 };
@@ -122,7 +114,6 @@ export type ImagesResponse = {
 
 export type TransformationFormProps = {
   action: "Add" | "Update";
-  userId: string;
   type: TransformationTypeKey;
   creditBalance?: number;
   data?: IImage | null;
