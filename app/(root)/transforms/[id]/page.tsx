@@ -1,13 +1,13 @@
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import Header from "@/components/Header";
 import TransformedImage from "@/components/TransformedImage";
 import { Button } from "@/components/ui/button";
-import { getImageById } from "@/lib/actions/image";
+import { getImageById } from "@/lib/data/images";
 import { getImageSize } from "@/lib/utils";
-// import { DeleteConfirmation } from "@/components/DeleteConfirmation";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -16,7 +16,11 @@ type PageProps = {
 const ImageDetails = async ({ params }: PageProps) => {
   const { userId } = await auth();
   const { id } = await params;
-  const image = await getImageById(id);
+  const result = await getImageById(id, userId);
+  if (!result) {
+    notFound();
+  }
+  const { image, isOwner } = result;
 
   return (
     <>
@@ -81,15 +85,15 @@ const ImageDetails = async ({ params }: PageProps) => {
             type={image.transformationType}
             title={image.title}
             isTransforming={false}
-            transformationConfig={image.config}
+            transformationConfig={image.config ?? null}
             hasDownload={true}
           />
         </div>
 
-        {userId === image.author.clerkId && (
+        {isOwner && image.publicId && (
           <div className="mt-4 space-y-4">
             <Button asChild type="button" className="submit-button capitalize">
-              <Link href={`/transformations/${image._id}/update`}>Update Image</Link>
+              <Link href={`/transforms/${image._id}/update`}>Update Image</Link>
             </Button>
           </div>
         )}

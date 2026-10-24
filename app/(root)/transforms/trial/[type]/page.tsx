@@ -1,10 +1,17 @@
 import Header from "@/components/Header";
 import { transformationTypes } from "@/constants";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import TrialTransformForm from "@/components/TrialTransformForm";
 
 type TransformationTypeKey = keyof typeof transformationTypes;
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return Object.keys(transformationTypes).map((type) => ({ type }));
+}
 
 type PageProps = {
   params: Promise<{ type: string }>;
@@ -14,6 +21,9 @@ const TrialTransformationsType = async ({ params }: PageProps) => {
   const { type } = await params;
   // The route segment is user-controlled; narrow the string to a known key.
   const transformation = transformationTypes[type as TransformationTypeKey];
+  if (!transformation) {
+    notFound();
+  }
 
   return (
     <div className="mx-auto max-w-7xl">

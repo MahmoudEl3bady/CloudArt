@@ -4,7 +4,7 @@ import type { WebhookEvent } from "@clerk/nextjs/server";
 import { User } from "@/db/models/user.model";
 import { connectToDatabase } from "@/db/mongoose";
 import { clerkClient } from "@clerk/nextjs/server";
-import { deleteUser, updateUser } from "@/lib/actions/user";
+import { deleteUser, updateUser } from "@/lib/data/users";
 import { NextResponse } from "next/server";
 import { serverEnv } from "@/lib/env.server";
 import type { UpdateUserParams } from "@/types";
