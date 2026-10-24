@@ -2,11 +2,12 @@ import "server-only";
 
 import { auth } from "@clerk/nextjs/server";
 import mongoose from "mongoose";
+import { getCldImageUrl } from "next-cloudinary";
 import { transformationTypes } from "@/constants";
 import { Image } from "@/db/models/image.model";
 import { connectToDatabase } from "@/db/mongoose";
 import { getOrCreateUserByClerkId, getUserByClerkId } from "@/lib/data/users";
-import { normalizeColorForConfig } from "@/lib/validation/image";
+import { normalizeColorForConfig, type SaveImageInput } from "@/lib/validation/image";
 import type {
   ActionResult,
   IImage,
@@ -16,7 +17,14 @@ import type {
 } from "@/types";
 
 // Every owner-scoped query funnels through this filter so the ownership
-// check lives in exactly one place (P5 tests + mutation checks rely on it).
+// check lives in exactly one place.
+// TODO(P5): tests through the public actions must cover:
+// - updateImage/deleteImage return NOT_FOUND for another user's image id
+//   (identical to a genuinely missing id, no existence leak)
+// - getImageById returns null for another user's private image and
+//   { isOwner: false } for another user's public image
+// - addImage/updateImage reject config/transformationURL smuggled in the
+//   payload (zod .strict()) and non-enum transformationType strings
 export const ownedBy = (ownerId: string) => ({ author: ownerId });
 
 type LeanImage = {
@@ -153,4 +161,82 @@ export async function getExampleImages(): Promise<ActionResult<ImagesResponse>> 
     console.error("getExampleImages failed:", error);
     return { ok: false, error: "SERVER_ERROR" };
   }
+}
+
+// Built server-side so clients can never inject a pre-baked URL (S-10).
+// Same builder the client components use, so stored rows match previews.
+const buildTransformationUrl = (
+  publicId: string,
+  width: number | undefined,
+  height: number | undefined,
+  config: Transformations,
+): string =>
+  getCldImageUrl({
+    width,
+    height,
+    src: publicId,
+    ...config,
+  });
+
+export async function insertImage({
+  authorId,
+  data,
+}: {
+  authorId: string;
+  data: SaveImageInput;
+}): Promise<{ _id: string }> {
+  await connectToDatabase();
+  const config = buildTransformationConfig(data.transformationType, data);
+  const created = await Image.create({
+    title: data.title,
+    transformationType: data.transformationType,
+    publicId: data.publicId,
+    secureURL: data.secureURL,
+    width: data.width,
+    height: data.height,
+    aspectRatio: data.aspectRatio,
+    prompt: data.prompt,
+    color: data.color,
+    config,
+    transformationUrl: buildTransformationUrl(data.publicId, data.width, data.height, config),
+    author: authorId,
+  });
+  return { _id: String(created._id) };
+}
+
+export async function updateImageOwnedBy(
+  ownerId: string,
+  imageId: string,
+  data: SaveImageInput,
+): Promise<{ _id: string } | null> {
+  await connectToDatabase();
+  const config = buildTransformationConfig(data.transformationType, data);
+  // $set allowlist: author, example, visibility, createdAt and _id are
+  // never written from a user payload (S-04).
+  const updated = await Image.findOneAndUpdate(
+    { _id: imageId, ...ownedBy(ownerId) },
+    {
+      $set: {
+        title: data.title,
+        transformationType: data.transformationType,
+        publicId: data.publicId,
+        secureURL: data.secureURL,
+        width: data.width,
+        height: data.height,
+        aspectRatio: data.aspectRatio,
+        prompt: data.prompt,
+        color: data.color,
+        config,
+        transformationUrl: buildTransformationUrl(data.publicId, data.width, data.height, config),
+      },
+    },
+    { new: true, runValidators: true },
+  ).lean();
+  return updated ? { _id: String(updated._id) } : null;
+}
+
+export async function deleteImageOwnedBy(ownerId: string, imageId: string): Promise<boolean> {
+  await connectToDatabase();
+  const deleted = await Image.findOneAndDelete({ _id: imageId, ...ownedBy(ownerId) }).lean();
+  return deleted !== null;
 }

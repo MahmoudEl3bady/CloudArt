@@ -17,15 +17,29 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { aspectRatioOptions, defaultValues, transformationTypes } from "@/constants";
 import { CustomField } from "./CustomField";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import type { AspectRatioKey } from "@/lib/utils";
 import { debounce, deepMergeObjects } from "@/lib/utils";
-import { getCldImageUrl } from "next-cloudinary";
 import { useRouter } from "next/navigation";
 import { addImage, updateImage } from "@/lib/actions/image";
+import { useToast } from "@/hooks/use-toast";
 import { imageFormSchema, normalizeColorForConfig } from "@/lib/validation/image";
 import { DynamicMediaUploader, DynamicTransformedImage } from "@/lib/dynamic-components";
-import type { IImage, TransformationFormProps, Transformations } from "@/types";
+import type {
+  ActionError,
+  IImage,
+  SaveImageFields,
+  TransformationFormProps,
+  Transformations,
+} from "@/types";
+
+const errorLabels: Record<ActionError, string> = {
+  UNAUTHENTICATED: "Please sign in and try again",
+  INVALID_INPUT: "Some fields are invalid",
+  NOT_FOUND: "That image no longer exists",
+  RATE_LIMITED: "Too many requests, please slow down",
+  SERVER_ERROR: "Something went wrong, please try again",
+};
 
 const isAspectRatioKey = (value?: string): value is AspectRatioKey =>
   !!value && value in aspectRatioOptions;
@@ -33,7 +47,6 @@ const isAspectRatioKey = (value?: string): value is AspectRatioKey =>
 const TransformationForm = ({
   action,
   data = null,
-  userId,
   type,
   config = null,
 }: TransformationFormProps) => {
@@ -43,8 +56,8 @@ const TransformationForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformationConfig, setTransformationConfig] = useState(config);
-  const [, startTransition] = useTransition();
   const router = useRouter();
+  const { toast } = useToast();
 
   const initialValues =
     data && action === "Update"
@@ -68,59 +81,41 @@ const TransformationForm = ({
     setIsSubmitting(true);
 
     if (data || image) {
-      const transformationUrl = getCldImageUrl({
-        width: image?.width,
-        height: image?.height,
-        src: image?.publicId ?? "",
-        ...transformationConfig,
-      });
-
-      const imageData = {
+      const imageData: SaveImageFields = {
         title: values.title,
-        publicId: image?.publicId,
+        publicId: image?.publicId ?? "",
         transformationType: type,
         width: image?.width,
         height: image?.height,
-        config: transformationConfig,
-        secureURL: image?.secureURL,
-        transformationURL: transformationUrl,
+        secureURL: image?.secureURL ?? "",
         aspectRatio: values.aspectRatio,
         prompt: values.prompt,
         color: values.color,
       };
-      startTransition(() => {});
+
       if (action === "Add") {
-        try {
-          const newImage = await addImage({
-            image: imageData,
-            userId,
-            path: "/",
+        const result = await addImage({ image: imageData });
+        if (result.ok) {
+          form.reset();
+          setImage(data ?? null);
+          router.push(`/transforms/${result.data._id}`);
+        } else {
+          toast({
+            title: errorLabels[result.error],
+            variant: "destructive",
           });
-          if (newImage) {
-            form.reset();
-            setImage(data ?? null);
-            router.push(`/transforms/${newImage._id}`);
-          }
-        } catch (error) {
-          console.log(error);
         }
       }
 
       if (action === "Update" && data) {
-        try {
-          const updatedImage = await updateImage({
-            image: {
-              ...imageData,
-              _id: data._id,
-            },
-            userId,
-            path: `/transforms/${data._id}`,
+        const result = await updateImage({ image: { ...imageData, _id: data._id } });
+        if (result.ok) {
+          router.push(`/transforms/${result.data._id}`);
+        } else {
+          toast({
+            title: errorLabels[result.error],
+            variant: "destructive",
           });
-          if (updatedImage) {
-            router.push(`/transforms/${updatedImage._id}`);
-          }
-        } catch (error) {
-          console.log(error);
         }
       }
     }

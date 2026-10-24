@@ -31,11 +31,7 @@ const AddTransformationsType = async ({ params }: PageProps) => {
   return (
     <>
       <Header title={transformation.title} subtitle={transformation.subTitle} />
-      <TransformsForm
-        action="Add"
-        type={transformation.type as TransformationTypeKey}
-        userId={userId}
-      />
+      <TransformsForm action="Add" type={transformation.type as TransformationTypeKey} />
     </>
   );
 };

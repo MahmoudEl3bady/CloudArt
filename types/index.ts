@@ -36,42 +36,26 @@ export type ActionResult<T> = { ok: true; data: T } | { ok: false; error: Action
 // ====== IMAGE PARAMS
 // Field optionality mirrors what the transformation forms can actually
 // produce (values come from image?.x before an upload/transform happens)
-// and the Mongoose schema in db/models/image.model.ts.
+// Client-submitted image fields. config and transformationURL are never
+// accepted from the client (S-10): the server rebuilds both.
+export type SaveImageFields = {
+  title: string;
+  publicId: string;
+  transformationType: TransformationTypeKey;
+  secureURL: string;
+  width?: number;
+  height?: number;
+  aspectRatio?: string;
+  prompt?: string;
+  color?: string;
+};
+
 export type AddImageParams = {
-  image: {
-    title: string;
-    publicId?: string;
-    transformationType: string;
-    width?: number;
-    height?: number;
-    config: Transformations | null;
-    secureURL?: string;
-    transformationURL?: string;
-    aspectRatio: string | undefined;
-    prompt: string | undefined;
-    color: string | undefined;
-  };
-  userId: string;
-  path: string;
+  image: SaveImageFields;
 };
 
 export type UpdateImageParams = {
-  image: {
-    _id: string;
-    title: string;
-    publicId?: string;
-    transformationType: string;
-    width?: number;
-    height?: number;
-    config: Transformations | null;
-    secureURL?: string;
-    transformationURL?: string;
-    aspectRatio: string | undefined;
-    prompt: string | undefined;
-    color: string | undefined;
-  };
-  userId: string;
-  path: string;
+  image: SaveImageFields & { _id: string };
 };
 
 // Shape of an image document as served to pages/components: the lean doc
@@ -130,7 +114,6 @@ export type ImagesResponse = {
 
 export type TransformationFormProps = {
   action: "Add" | "Update";
-  userId: string;
   type: TransformationTypeKey;
   creditBalance?: number;
   data?: IImage | null;

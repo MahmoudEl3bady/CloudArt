@@ -1,58 +1,107 @@
 "use server";
-import { connectToDatabase } from "@/db/mongoose";
+
+import { auth } from "@clerk/nextjs/server";
+import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
-import { Image } from "@/db/models/image.model";
+import { deleteImageOwnedBy, insertImage, updateImageOwnedBy } from "@/lib/data/images";
 import { getOrCreateUserByClerkId } from "@/lib/data/users";
-import { redirect } from "next/navigation";
-import type { AddImageParams, UpdateImageParams } from "@/types";
+import { saveImageSchema, updateImageSchema } from "@/lib/validation/image";
+import type { ActionResult, AddImageParams, UpdateImageParams } from "@/types";
 
-export async function deleteImage(imageId: string) {
-  try {
-    await connectToDatabase();
-    const deletedImage = await Image.findOneAndDelete({ _id: imageId });
-    if (!deletedImage) {
-      throw new Error("Image not found");
-    }
-    return deletedImage;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  } finally {
-    redirect("/");
+const revalidateImagePaths = (detailPath?: string) => {
+  revalidatePath("/");
+  revalidatePath("/profile");
+  if (detailPath) {
+    revalidatePath(detailPath);
   }
-}
+};
 
-export async function updateImage({ path, image, userId: _userId }: UpdateImageParams) {
-  try {
-    await connectToDatabase();
-    const updatedImage = await Image.findOneAndUpdate(
-      { _id: image._id },
-      { ...image },
-      { new: true },
-    );
-    if (!updatedImage) {
-      throw new Error("Image not found");
-    }
-    revalidatePath(path);
-    return JSON.parse(JSON.stringify(updateImage));
-  } catch (error) {
-    console.error(error);
-    throw error;
+export async function addImage({ image }: AddImageParams): Promise<ActionResult<{ _id: string }>> {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) {
+    return { ok: false, error: "UNAUTHENTICATED" };
   }
-}
 
-export async function addImage({ image, userId, path }: AddImageParams) {
+  const parsed = saveImageSchema.safeParse(image);
+  if (!parsed.success) {
+    return { ok: false, error: "INVALID_INPUT" };
+  }
+
   try {
-    await connectToDatabase();
-    const author = await getOrCreateUserByClerkId(userId);
+    const author = await getOrCreateUserByClerkId(clerkId);
     if (!author) {
-      throw new Error("User not found");
+      return { ok: false, error: "UNAUTHENTICATED" };
     }
-    const createdImage = await Image.create({ ...image, author: author._id });
-    revalidatePath(path);
-    return JSON.parse(JSON.stringify(createdImage));
+
+    const created = await insertImage({ authorId: author._id, data: parsed.data });
+    revalidateImagePaths();
+    return { ok: true, data: created };
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error("addImage failed:", error);
+    return { ok: false, error: "SERVER_ERROR" };
+  }
+}
+
+export async function updateImage({
+  image,
+}: UpdateImageParams): Promise<ActionResult<{ _id: string }>> {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) {
+    return { ok: false, error: "UNAUTHENTICATED" };
+  }
+
+  const parsed = updateImageSchema.safeParse(image);
+  if (!parsed.success) {
+    return { ok: false, error: "INVALID_INPUT" };
+  }
+  if (!mongoose.isValidObjectId(parsed.data._id)) {
+    return { ok: false, error: "NOT_FOUND" };
+  }
+
+  try {
+    const author = await getOrCreateUserByClerkId(clerkId);
+    if (!author) {
+      return { ok: false, error: "UNAUTHENTICATED" };
+    }
+
+    const { _id, ...fields } = parsed.data;
+    const updated = await updateImageOwnedBy(author._id, _id, fields);
+    if (!updated) {
+      return { ok: false, error: "NOT_FOUND" };
+    }
+
+    revalidateImagePaths(`/transforms/${_id}`);
+    return { ok: true, data: updated };
+  } catch (error) {
+    console.error("updateImage failed:", error);
+    return { ok: false, error: "SERVER_ERROR" };
+  }
+}
+
+export async function deleteImage(imageId: string): Promise<ActionResult<{ _id: string }>> {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) {
+    return { ok: false, error: "UNAUTHENTICATED" };
+  }
+  if (!mongoose.isValidObjectId(imageId)) {
+    return { ok: false, error: "NOT_FOUND" };
+  }
+
+  try {
+    const author = await getOrCreateUserByClerkId(clerkId);
+    if (!author) {
+      return { ok: false, error: "UNAUTHENTICATED" };
+    }
+
+    const deleted = await deleteImageOwnedBy(author._id, imageId);
+    if (!deleted) {
+      return { ok: false, error: "NOT_FOUND" };
+    }
+
+    revalidateImagePaths(`/transforms/${imageId}`);
+    return { ok: true, data: { _id: imageId } };
+  } catch (error) {
+    console.error("deleteImage failed:", error);
+    return { ok: false, error: "SERVER_ERROR" };
   }
 }
