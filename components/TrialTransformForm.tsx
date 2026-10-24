@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 import {
   Select,
   SelectContent,
@@ -24,15 +24,8 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Download, AlertCircle, Sparkles } from "lucide-react";
 import { Alert, AlertDescription } from "./ui/alert";
+import { imageFormSchema, normalizeColorForConfig } from "@/lib/validation/image";
 import type { IImage, Transformations } from "@/types";
-
-export const formSchema = z.object({
-  title: z.string(),
-  aspectRatio: z.string().optional(),
-  color: z.string().optional(),
-  prompt: z.string().optional(),
-  publicId: z.string(),
-});
 
 type TransformationTypeKey = keyof typeof transformationTypes;
 
@@ -50,8 +43,8 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
   const [showDownloadPrompt, setShowDownloadPrompt] = useState(false);
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof imageFormSchema>>({
+    resolver: zodResolver(imageFormSchema),
     defaultValues: {
       ...defaultValues,
       title: `Trial ${transformationType.title}`,
@@ -81,6 +74,8 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
     debounce(() => {
       // `type` is a dynamic transformation key ("remove"/"recolor" at the
       // call sites); TS cannot check the computed key against Transformations.
+      const isPrompt = fieldName === "prompt";
+      const configValue = isPrompt ? value : normalizeColorForConfig(value);
       setNewTransformation((prevState) => {
         const prevConfig = (prevState?.[type as keyof Transformations] ?? {}) as Record<
           string,
@@ -90,7 +85,7 @@ const TrialTransformForm = ({ type }: TrialTransformFormProps) => {
           ...prevState,
           [type]: {
             ...prevConfig,
-            [fieldName === "prompt" ? "prompt" : "to"]: value,
+            [isPrompt ? "prompt" : "to"]: configValue,
           },
         } as Transformations;
       });

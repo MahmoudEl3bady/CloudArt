@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 
 import {
   Select,
@@ -23,16 +23,12 @@ import { debounce, deepMergeObjects } from "@/lib/utils";
 import { getCldImageUrl } from "next-cloudinary";
 import { useRouter } from "next/navigation";
 import { addImage, updateImage } from "@/lib/actions/image";
+import { imageFormSchema, normalizeColorForConfig } from "@/lib/validation/image";
 import { DynamicMediaUploader, DynamicTransformedImage } from "@/lib/dynamic-components";
 import type { IImage, TransformationFormProps, Transformations } from "@/types";
 
-export const formSchema = z.object({
-  title: z.string(),
-  aspectRatio: z.string().optional(),
-  color: z.string().optional(),
-  prompt: z.string().optional(),
-  publicId: z.string(),
-});
+const isAspectRatioKey = (value?: string): value is AspectRatioKey =>
+  !!value && value in aspectRatioOptions;
 
 const TransformationForm = ({
   action,
@@ -53,22 +49,22 @@ const TransformationForm = ({
   const initialValues =
     data && action === "Update"
       ? {
-          title: data?.title,
-          aspectRatio: data?.aspectRatio,
-          color: data?.color,
-          prompt: data?.prompt,
-          publicId: data?.publicId,
+          title: data.title,
+          aspectRatio: isAspectRatioKey(data.aspectRatio) ? data.aspectRatio : undefined,
+          color: data.color,
+          prompt: data.prompt,
+          publicId: data.publicId,
         }
       : defaultValues;
 
   // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof imageFormSchema>>({
+    resolver: zodResolver(imageFormSchema),
     defaultValues: initialValues,
   });
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof imageFormSchema>) {
     setIsSubmitting(true);
 
     if (data || image) {
@@ -155,6 +151,8 @@ const TransformationForm = ({
     debounce(() => {
       // `type` is a dynamic transformation key ("remove"/"recolor" at the
       // call sites); TS cannot check the computed key against Transformations.
+      const isPrompt = fieldName === "prompt";
+      const configValue = isPrompt ? value : normalizeColorForConfig(value);
       setNewTransformation((prevState) => {
         const prevConfig = (prevState?.[type as keyof Transformations] ?? {}) as Record<
           string,
@@ -164,7 +162,7 @@ const TransformationForm = ({
           ...prevState,
           [type]: {
             ...prevConfig,
-            [fieldName === "prompt" ? "prompt" : "to"]: value,
+            [isPrompt ? "prompt" : "to"]: configValue,
           },
         } as Transformations;
       });
