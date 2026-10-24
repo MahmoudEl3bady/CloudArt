@@ -23,23 +23,10 @@ import { debounce, deepMergeObjects } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { addImage, updateImage } from "@/lib/actions/image";
 import { useToast } from "@/hooks/use-toast";
+import { errorLabels } from "@/lib/action-errors";
 import { imageFormSchema, normalizeColorForConfig } from "@/lib/validation/image";
 import { DynamicMediaUploader, DynamicTransformedImage } from "@/lib/dynamic-components";
-import type {
-  ActionError,
-  IImage,
-  SaveImageFields,
-  TransformationFormProps,
-  Transformations,
-} from "@/types";
-
-const errorLabels: Record<ActionError, string> = {
-  UNAUTHENTICATED: "Please sign in and try again",
-  INVALID_INPUT: "Some fields are invalid",
-  NOT_FOUND: "That image no longer exists",
-  RATE_LIMITED: "Too many requests, please slow down",
-  SERVER_ERROR: "Something went wrong, please try again",
-};
+import type { IImage, SaveImageFields, TransformationFormProps, Transformations } from "@/types";
 
 const isAspectRatioKey = (value?: string): value is AspectRatioKey =>
   !!value && value in aspectRatioOptions;
